@@ -33,6 +33,21 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
     DoubleBuffered = False
     ParentDoubleBuffered = False
     TabOrder = 1
+    object edtCodigo: TJvCalcEdit
+      Left = 12
+      Top = 12
+      Width = 99
+      Height = 21
+      BevelInner = bvLowered
+      BevelKind = bkFlat
+      BevelOuter = bvNone
+      Flat = False
+      ParentFlat = False
+      ImageKind = ikEllipsis
+      ButtonWidth = 34
+      TabOrder = 0
+      DecimalPlacesAlwaysShown = False
+    end
   end
   object pnlButtons: TPanel
     Left = 0
