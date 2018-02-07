@@ -1,9 +1,9 @@
-object FPai: TFPai
+object FrmPai: TFrmPai
   Left = 4
   Top = 79
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  Caption = 'FPai'
+  Caption = 'FrmPai'
   ClientHeight = 185
   ClientWidth = 316
   Color = clBtnFace
@@ -17,10 +17,6 @@ object FPai: TFPai
   Position = poOwnerFormCenter
   OnClose = FormClose
   OnCreate = FormCreate
-  OnDestroy = FormDestroy
-  OnKeyDown = FormKeyDown
-  OnKeyPress = FormKeyPress
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
 end

@@ -3,14 +3,37 @@ unit UPaiCadastro;
 interface
 
 uses
-  Classes, Windows, Messages, SysUtils, Variants, Graphics, Controls, Forms,
-  Dialogs, ExtCtrls, ComCtrls, CategoryButtons, StdCtrls,
-  Mask, JvBaseEdits, DB, DBClient, JvDBCombobox, Buttons, DBGrids, newbtn, Menus,
-  System.StrUtils, JvExMask, JvToolEdit,
-  UPai, UDMPaiCadastro;
+  Classes,
+  Windows,
+  Messages,
+  SysUtils,
+  Variants,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  ExtCtrls,
+  ComCtrls,
+  CategoryButtons,
+  StdCtrls,
+  Mask,
+  JvBaseEdits,
+  DB,
+  DBClient,
+  JvDBCombobox,
+  Buttons,
+  DBGrids,
+  newbtn,
+  Menus,
+  System.StrUtils,
+  JvExMask,
+  JvToolEdit,
+  UFrmPai,
+  UDMPaiCadastro,
+  UFrmPai;
 
 type
-  TFPaiCadastro = class(TFPai)
+  TFPaiCadastro = class(TFrmPai)
     PanelChave: TPanel;
     Label1: TLabel;
     EditCodigo: TJvCalcEdit;
@@ -111,10 +134,7 @@ var
 implementation
 
 uses
-  Constantes, ConstantesRelatorios, Consultas,
-  ClassCaixasDeDialogos, ClassArquivoINI, ClassFuncoesString, ClassFuncoesForm, ClassHelperDataSet,
-  UDMConexao, UPrincipal, UPaiModulo, UResponsabilidade, UPaiRelatorioGrafico, UTrocaCodigos, UPaiRelatorioHibrido, ULogTabela,
-  UCadConfigValidacaoRegistro, UAguarde2;
+  Constantes;
 
 {$R *.dfm}
 
@@ -122,12 +142,6 @@ uses
 procedure TFPaiCadastro.FormCreate(Sender: TObject);
 begin
   inherited;
-  if (Self.Width < 460) and
-    (DelphiRodando) then
-    TCaixasDeDialogo.Aviso('Largura mínima da tela de cadastro deve ser 460');
-  if (Self.Height < 285) and
-    (DelphiRodando) then
-    TCaixasDeDialogo.Aviso('Altura mínima da tela de cadastro deve ser 285');
 
   ChamadoPelaConsulta := False;
   RetornoCadastro     := null;

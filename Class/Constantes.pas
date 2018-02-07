@@ -101,12 +101,6 @@ ResourceString
   ErroServidorApl = '>> ERRO DO SERVIDOR DE APLICAÇÃO <<'#13#13;
   MensagemServidorApl = '>> MENSAGEM DO SERVIDOR DE APLICAÇÃO <<'#13#13;
 
-  // Seguranca nos Dados
-  sRegistroCadastrado = 'Registro já cadastrado por outro usuário, verifique.';
-  sValorItemZerado = 'Existem itens com valor total igual a zero, favor verificar' + #13 + 'O processamento será interrompido';
-  sValorDocumentoZerado = 'Valor do documento com valor igual a zero, favor verificar' + #13 + 'O processamento será interrompido';
-  sRegistroSistema = 'Este cadastro é específico do Sistema e não pode ser excluído ou alterado';
-
   // Arquivos
   ArquivoConexoesDBX = 'ConexoesDBX.ini';
 

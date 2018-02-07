@@ -5,7 +5,7 @@ uses
   UFrmPrincipal in 'UFrmPrincipal.pas' {FrmPrincipal},
   UDMPai in 'Bases\UDMPai.pas' {DMPai: TDataModule},
   UDMPaiCadastro in 'Bases\UDMPaiCadastro.pas' {DMPaiCadastro: TDataModule},
-  UPai in 'Bases\UPai.pas' {FPai},
+  UFrmPai in 'Bases\UFrmPai.pas' {FrmPai},
   UPaiAssistente in 'Bases\UPaiAssistente.pas' {FPaiAssistente},
   UPaiCadastro in 'Bases\UPaiCadastro.pas' {FPaiCadastro},
   ClassDataSet in '..\Class\ClassDataSet.pas',
@@ -14,19 +14,15 @@ uses
   ClassPaiCadastro in '..\Class\ClassPaiCadastro.pas',
   ClassStatus in '..\Class\ClassStatus.pas',
   Constantes in '..\Class\Constantes.pas',
-  UDMConexao in 'Bases\UDMConexao.pas' {DMConexao: TDataModule};
+  UDMConexao in 'Bases\UDMConexao.pas' {DMConexao: TDataModule},
+  UFrmPaiCadastro in 'Bases\UFrmPaiCadastro.pas' {FrmPaiCadastro};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
-  Application.CreateForm(TDMPai, DMPai);
-  Application.CreateForm(TDMPaiCadastro, DMPaiCadastro);
-  Application.CreateForm(TFPai, FPai);
-  Application.CreateForm(TFPaiAssistente, FPaiAssistente);
-  Application.CreateForm(TFPaiCadastro, FPaiCadastro);
-  Application.CreateForm(TDMConexao, DMConexao);
+  Application.CreateForm(TFrmPai, FrmPai);
+  Application.CreateForm(TFrmPaiCadastro, FrmPaiCadastro);
   Application.Run;
 end.

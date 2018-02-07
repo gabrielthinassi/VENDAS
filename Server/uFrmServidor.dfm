@@ -44,7 +44,7 @@ object Servidor: TServidor
   object lblStatusServidor: TLabel
     Left = 397
     Top = 38
-    Width = 186
+    Width = 6
     Height = 24
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText

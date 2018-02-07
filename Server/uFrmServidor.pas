@@ -84,19 +84,15 @@ procedure TServidor.btnTestarBDClick(Sender: TObject);
 begin
   with SMConexao.Conexao do
   begin
-        Params[Params.IndexOfName('Database')] := Concat('Database=', edtHostBD.Text, '/', edtPortBD.Text, ':', edtDiretorioBD.Text);
-        Connected := True;
+    Params[Params.IndexOfName('Database')] := Concat('Database=', edtHostBD.Text, '/', edtPortBD.Text, ':', edtDiretorioBD.Text);
+    try
+      Connected := True;
+      if SMConexao.Conexao.Connected then
+        ShowMessage('Conexão efetuada com Sucesso!');
+    except
+      ShowMessage('Não foi possível conectar a Base de Dados!');
+    end;
   end;
-
-  if SMConexao.Conexao.Connected then
-  begin
-    ShowMessage('Conexão efetuada com Sucesso!');
-  end
-  else
-  begin
-    ShowMessage('Não foi possível conectar a Base de Dados!');
-  end;
-
 end;
 
 procedure TServidor.edtDiretorioBDButtonClick(Sender: TObject);

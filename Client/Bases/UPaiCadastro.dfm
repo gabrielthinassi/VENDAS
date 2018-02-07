@@ -19,7 +19,6 @@ inherited FPaiCadastro: TFPaiCadastro
     BevelOuter = bvLowered
     TabOrder = 0
     OnExit = PanelChaveExit
-    ExplicitWidth = 454
     DesignSize = (
       500
       34)
@@ -70,7 +69,6 @@ inherited FPaiCadastro: TFPaiCadastro
       ParentShowHint = False
       ShowHint = True
       TabOrder = 1
-      ExplicitLeft = 350
       object SBPrimeiro: TNewBtn
         Left = 2
         Top = 2
@@ -216,7 +214,6 @@ inherited FPaiCadastro: TFPaiCadastro
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 226
     object BotaoIncluir: TNewBtn
       Left = 3
       Top = 3
@@ -555,8 +552,6 @@ inherited FPaiCadastro: TFPaiCadastro
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitWidth = 356
-    ExplicitHeight = 226
     object PageControl1: TPageControl
       Left = 0
       Top = 0
@@ -565,12 +560,8 @@ inherited FPaiCadastro: TFPaiCadastro
       ActivePage = TabSheet1
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 356
-      ExplicitHeight = 226
       object TabSheet1: TTabSheet
         Caption = 'Dados'
-        ExplicitWidth = 348
-        ExplicitHeight = 198
       end
     end
   end
