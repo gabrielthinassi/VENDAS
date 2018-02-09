@@ -10,8 +10,6 @@ uses
   Data.SqlExpr;
 
 type
-  TFuncaoLogica = function: boolean of object;
-
   TDMPaiCadastro = class(TDMPai)
     CDSCadastro: TClientDataSet;
     DSPCCadastro: TDSProviderConnection;
@@ -74,11 +72,6 @@ type
 
     function Aplique(Exclusao: boolean = false): integer; virtual;
 
-    //Funcoes de Proximo Código
-    function ProximoCodigo(Tabela: string): int64;
-    function ProximoCodigoAcrescimo(Tabela: string; Acrescimo: Integer = 1): int64;
-
-
     procedure AtribuiAutoIncDetalhe(DataSet: TDataSet; Classe: TFClassPaiCadastro; CampoChaveEstrangeira: String);
 
     class procedure ValidateGeral(Sender: TField; CampoDescricao: string; sClasseBusca: string; Filtro: string = ''; NomeCDSCache: string = ''; ValidaStatus: boolean = True; ValidaStatusBloqueio: boolean = False); overload;
@@ -96,7 +89,7 @@ implementation
 
 { %CLASSGROUP 'Vcl.Controls.TControl' }
 
-uses Constantes, ClassDataSet;
+uses Constantes, ClassDataSet, UDMConexao;
 
 {$R *.dfm}
 
@@ -107,7 +100,7 @@ begin
   FIdDetalhe := 0;
   FRefreshRecordAfterPost := True;
 
-  DSPCCadastro.SQLConnection := ConexaoDS;
+  DSPCCadastro.SQLConnection := DMConexao.ConexaoDS;
 
   if DSPCCadastro.ServerClassName <> '' then
     CDSCadastro.RemoteServer := DSPCCadastro;

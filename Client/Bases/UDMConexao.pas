@@ -10,108 +10,16 @@ uses
   frxClass, frxDsgnIntf, frxNetUtils, frxRes, frxExportCSV, frxExportImage, frxExportText, frxExportXML, frxExportODF, frxExportXLS,
   frxExportHTML, frxExportMail, frxExportPDF, frxDMPExport, frxDCtrl, frxADOComponents, frxDBXComponents, fcxExportCSV, fcxExportDBF, fcxExportHTML, fcxExportBIFF,
   fcxExportODF, fcxCustomExport, fcxExportXML,
-  TekPesquisaGrid, TekProtClient, UTekProtTypes, UTekProtConsts,
-  {$IF DEFINED(FATURAMENTO) OR DEFINED(ESTOQUE) OR DEFINED(LIVROSFISCAIS) OR DEFINED(ANEXO)} ClassConfigACBr, ClassConfigCTe, ClassConfigMDFe, {$ENDIF}
-  LF_Constantes, ClassEnviarEmail, ClassUsuario_CFG_Email, ClassSecaoAtualNovo, FuncoesCallBack2;
-
-function HtmlHelp(hwndCaller: THandle; pszFile: PAnsiChar; uCommand: cardinal; dwData: longint): THandle; stdcall; external 'hhctrl.ocx' name 'HtmlHelpA';
+  TekPesquisaGrid;
 
 type
   EFuncionalidadeNaoLiberada = class(Exception);
 
   TDMConexao = class(TDataModule)
-    KeyNavigator1: TKeyNavigator;
-    CDSServidores: TClientDataSet;
-    CDSServidoresOrdem: TIntegerField;
-    CDSServidoresServidor: TStringField;
-    CDSServidoresPorta: TIntegerField;
-    PopupMenuGrid: TPopupMenu;
-    OcultarColuna1: TMenuItem;
-    ReexibirColunas1: TMenuItem;
-    N1: TMenuItem;
-    PesquisaIncremental1: TMenuItem;
-    Exportar1: TMenuItem;
-    GridParaHTML1: TGridParaHTML;
-    DataSetParaCSV1: TDataSetParaCSV;
-    SaveDialogGrid: TSaveDialog;
-    CDSDefaults: TClientDataSet;
-    RDprint1: TRDprint;
-    ApplicationEvents1: TApplicationEvents;
-    SaveDialogReg: TSaveDialog;
-    OpenDialogReg: TOpenDialog;
-    ImageList1: TImageList;
-    CopiarRegistrosparareadeTransferncia1: TMenuItem;
-    SeparadorFuncaoAgregacao: TMenuItem;
-    FuncoesdeAgregacao1: TMenuItem;
-    SomarColuna1: TMenuItem;
-    ContarRegistros1: TMenuItem;
-    MediaColuna1: TMenuItem;
-    CDSServidoresDescricao: TStringField;
-    frxExportaPDF: TfrxPDFExport;
-    frxExportaMail: TfrxMailExport;
-    frxExportaHTML: TfrxHTMLExport;
-    frxExportaXLS: TfrxXLSExport;
-    frxExportaODS: TfrxODSExport;
-    frxExportaODT: TfrxODTExport;
-    frxExportaXML: TfrxXMLExport;
-    frxExportaBMP: TfrxBMPExport;
-    frxExportaSimpleText: TfrxSimpleTextExport;
-    frxExportaJPEG: TfrxJPEGExport;
-    frxExportCSV: TfrxCSVExport;
-    frxDialogControls1: TfrxDialogControls;
-    frxDotMatrixExport1: TfrxDotMatrixExport;
-    Todaagrade1: TMenuItem;
-    ApenasColunaAtual1: TMenuItem;
-    ApenasLinhaAtual1: TMenuItem;
-    CDSServidoresProxy_Host: TStringField;
-    CDSServidoresProxy_Porta: TIntegerField;
-    CDSServidoresProxy_Usuario: TStringField;
-    CDSServidoresProxy_Senha: TStringField;
-    CDSServidoresProtecao_Host: TStringField;
-    CDSServidoresProtecao_Porta: TIntegerField;
-    CDSServidoresSecundario_Host: TStringField;
-    CDSServidoresSecundario_Porta: TIntegerField;
-    SQLConexao: TSQLConnection;
-    CDSPermissoes: TClientDataSet;
+    ConexaoDS: TSQLConnection;
     CDSConfigCamposClasses: TClientDataSet;
-    CDSAtalhos: TClientDataSet;
     DSPCCadAtalho: TDSProviderConnection;
     CDSConfigClasses: TClientDataSet;
-    CDSIndicadores: TClientDataSet;
-    FuncoesdeAtribuicao: TMenuItem;
-    Formula: TMenuItem;
-    Arredondarpara2casasdecimais: TMenuItem;
-    Arredondarpara1casadecimal: TMenuItem;
-    Arredondarparaunidade: TMenuItem;
-    Arredondarparadezena: TMenuItem;
-    Ajustarparaprximointeiro: TMenuItem;
-    Ajustarparainteiroanterior: TMenuItem;
-    Atribuirvalorfixo: TMenuItem;
-    N2: TMenuItem;
-    N3: TMenuItem;
-    N4: TMenuItem;
-    FiltrarRegistros1: TMenuItem;
-    frxADOComponents1: TfrxADOComponents;
-    frxDBXComponents1: TfrxDBXComponents;
-    AnalisaremCubodeDeciso1: TMenuItem;
-    N5: TMenuItem;
-    SynPasSynPadrao: TSynPasSyn;
-    SynSQLSynPadrao: TSynSQLSyn;
-    fcxXMLExport1: TfcxXMLExport;
-    fcxODSExport1: TfcxODSExport;
-    fcxBIFFExport1: TfcxBIFFExport;
-    fcxHTMLExport1: TfcxHTMLExport;
-    fcxDBFExport1: TfcxDBFExport;
-    fcxCSVExport1: TfcxCSVExport;
-    AutoAjusteColunas1: TMenuItem;
-    TekPesquisaGrid1: TTekPesquisaGrid;
-    CDSServidoresTipo: TSmallintField;
-    CDSServidoresRede: TSmallintField;
-    ApenasClulaatual1: TMenuItem;
-    SeparadorOpcoesAgregacao: TMenuItem;
-    ContarRegistrosMarcados1: TMenuItem;
-    SomarColunaapenasdosRegistrosMarcados1: TMenuItem;
-    MediaAritmeticadaColunaapenasdosRegistrosMarcados1: TMenuItem;
     procedure OcultarColuna1Click(Sender: TObject);
     procedure ReexibirColunas1Click(Sender: TObject);
     procedure PesquisaIncremental1Click(Sender: TObject);
@@ -131,8 +39,8 @@ type
     procedure Todaagrade1Click(Sender: TObject);
     procedure ApenasColunaAtual1Click(Sender: TObject);
     procedure ApenasLinhaAtual1Click(Sender: TObject);
-    procedure SQLConexaoAfterConnect(Sender: TObject);
-    procedure SQLConexaoAfterDisconnect(Sender: TObject);
+    procedure ConexaoDSAfterConnect(Sender: TObject);
+    procedure ConexaoDSAfterDisconnect(Sender: TObject);
     procedure CDSIndicadoresNewRecord(DataSet: TDataSet);
     procedure CDSIndicadoresAfterInsert(DataSet: TDataSet);
     procedure FiltrarRegistros1Click(Sender: TObject);
@@ -146,52 +54,10 @@ type
     procedure CDSServidoresBeforePost(DataSet: TDataSet);
     procedure ApenasClulaatual1Click(Sender: TObject);
   private
-    fSecaoAtual: TClassSecaoNovo;
-    fConfig: TConfigNovo;
-
-    ConexaoTratada: Boolean;
-
-    FormMailExportDialog: TfrxMailExportDialog;
-
-    FStatusDeMensagens, FStatusSAC: Integer;
-    FContadorTransacoesTemporarias: Integer;
-    LendoHelp: Boolean;
-
-    {$region 'TekProt'}
-    FCodigoClienteTek: string;
-    FNomeClienteTek: string;
-    FCNPJClienteTek: string;
-    FEmpresasDisponiveis:string;
-    FFuncionalidadesDisponiveis:string;
-    procedure QuandoNaoAutorizado(Sender: TObject; prResult: TVlResult);
-    procedure AposValidar(Sender: TObject; prResult: TVlResult);
-    {$endregion}
-
-    procedure TrataOciosidade(var Msg: tagMSG);
-    procedure TrataHelp(var Msg: tagMSG);
-
-    procedure SetStatusDeMensagens(const Value: Integer);
-    procedure SetStatusSAC(const Value: Integer);
-    procedure TrataMensagemDeFechamento(TemMensagem: Boolean);
-
-    procedure ExtrairModeloRelPai;
-    procedure VerificaTrocaDeSenha;
-
-    function CallbackMethod(const Args: TJSONValue): TJSONValue;
-
     procedure CarregarListaDeTabelasEProceduresDoBDD;
     procedure CarregarUnitsProtegidas;
     procedure CarregarProcessamentosProtegidos;
   public
-    TekProtClient: TTekProtClient;
-
-    CDSUnitsProtegidas: TClientDataSet;
-    CDSProcessamentosProtegidos: TClientDataSet;
-
-    LogoEmpresa: TPicture;
-
-    PrimeiraVezDoTimer: cardinal;
-    cDataHoraServidorNaEntrada, cDataHoraServidor: TDateTime;
     ServidorBDD, VersaoBDD: string;
     ConexaoBDD_Tipo: Integer;
 
@@ -200,46 +66,13 @@ type
     Flag_EnviaEmail_Metodo: Integer;
     Flag_EnviandoRelatorioFastReport: Boolean;
 
-    CallBack: TClienteCallback;
-
     procedure FecharSistema;
-
     procedure EntrarNoSistema(TrocaInterna: Boolean);
     function ConectaServidorAplicacao(cUsuario, cSenha: string; iQuebra: Integer): Boolean;
     procedure LerServidoresAplicacao;
-    procedure AbrirHelp;
 
-    /// <summary>
-    ///   Verifica se uma funcionalidade protegida da sistema está liberada para a empresa.
-    /// </summary>
-    /// <param name="LabelFuncionalidade">
-    ///   Código único de funcionalidade definido no Tekprot
-    /// </param>
-    function FuncionalidadeLiberada(LabelFuncionalidade: String): Boolean;
-
-    /// <summary>
-    ///   Verifica se o processamento é protegido e se está liberado para uso pela empresa.
-    /// </summary>
-    /// <param name="CodigoTekSystemDoProcessamento">
-    ///   código único do processamento definido pela Tek-system
-    /// </param>
-    function ExecucaoDeProcessamentoLiberado(CodigoTekSystemDoProcessamento: string): Boolean;
-
-    /// <summary>
-    ///   Verifica se uma unidade de codificação é protegida e se está liberada
-    ///   para uso pela empresa.
-    /// </summary>
-    /// <param name="CodigoTekSystemDaUnidadeCodifica">
-    ///   Código único da unidade de codificação definido pela Tek-system
-    /// </param>
-    /// <exception cref="EFuncionalidadeNaoLiberada">
-    ///   Caso a unidade de codificação seja protegida, mas não esteja liberada
-    /// </exception>
-    procedure VerificarUsoUnidadeCodificaoLiberado(CodigoTekSystemDaUnidadeCodifica: string);
-
-    function ExecuteMethods(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
-    function ExecuteMethods_ComCallBack(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
-    function ExecuteMethods_SegundoPlano(Titulo, Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
+    //Execução de Métodos
+    function ExecutaMetodo(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
 
     function ExecuteReader(sql: string; TamanhoPacote: Integer = 1000; MonitoraSQL: Boolean = True): OleVariant;
     function ExecuteScalar(sql: string; MonitoraSQL: Boolean = True): OleVariant;
@@ -257,98 +90,12 @@ type
     procedure CarregaDefaults;
     procedure AtribuirOutrosDefault(DS: TDataSet; Tabela: string);
 
-    procedure CarregaPermissoesDoCadastro;
-    procedure CarregaConfigCamposClasses;
-    procedure CarregaConfigClasses;
-    procedure CarregaMensagem;
-    procedure CarregaSecaoAtual;
-    procedure CarregaModulosDisp(var CDS: TClientDataSet);
-
     function GetCDSConfigCamposClasses: OleVariant;
     function GetCDSConfigClasses: OleVariant;
-
-    procedure ChamarConfig(ReLer: Boolean = True);
-
-    procedure ExportarRegistrosCDS(Tabela, NomeDoArquivo: string; CDSOrigem: TClientDataSet);
-    procedure ImportarRegistrosParaCDS(BotaoIncluir, BotaoGravar: TNewBtn;
-      Tabela, NomeDoArquivo: string; CDSDestino: TClientDataSet;
-      AntesDeGravar: TDataSetNotifyEvent = nil; AntesDeAceitar: TDataSetNotifyEvent = nil);
-
-    function VerificaAutorizacao(cOpcao: Integer): Boolean; overload;
-    function VerificaAutorizacao(sOpcao: string): Boolean; overload;
-    function VerificaAutorizacao_ComOutroUsuario(cUsuario, cOpcao: Integer): Boolean;
-
-    {$region 'Relacionados a dia não útil'}
-    procedure CarregaDiasNaoUteis(Modulo: Integer);
-    procedure ReCarregaDiasNaoUteis(Modulo: Integer);
-    procedure DesCarregaDiasNaoUteis;
-    function DiaUtil(cData: TDate; Modulo: Integer; Cidade: Integer = 0): Boolean;
-    function ProximoDiaUtil(Data: TDate; Modulo: Integer; Cidade: Integer = 0): TDate;
-    function DiaUtilAnterior(Data: TDate; Modulo: Integer; Cidade: Integer = 0): TDate;
-    function DiasUteisEntre(dDataInicial, dDataFinal: TDateTime; Modulo: Integer; Cidade: Integer = 0): Integer;
-    function DiasEntre(dDataInicial, dDataFinal: TDate; iSistema: Integer; bDiaUtil, bPermiteNegativo: Boolean): Integer;
-    {$endregion}
-
-    function GetContadorTransacoesTemporarias: Integer;
-    property ContadorTransacoesTemporarias: Integer read GetContadorTransacoesTemporarias;
 
     function Ler(Campos, Tabela: string; Ordem: Integer; Where: string = ''): OleVariant;
     function Acha(Tabela, Campo: string; Valor: Variant; CampoEmpresa: string = ''; CodigoDaEmpresa: Integer = -1): Boolean;
 
-    property StatusDeMensagens: Integer read FStatusDeMensagens write SetStatusDeMensagens;
-    property StatusSAC: Integer read FStatusSAC write SetStatusSAC;
-
-    {$region 'Relacionados a Atualização do Sistema'}
-    procedure AtualizarModelosRelatorios(MostrarMensagem: Boolean);
-    procedure AtualizarModelosIndicadores(MostrarMensagem: Boolean);
-    procedure AtualizarConfigRemessaRetornoBanc(MostrarMensagem: Boolean);
-    procedure AtualizarImportaExportaTitulos(MostrarMensagem: Boolean);
-    procedure AtualizarModelosDataWarehouse(MostrarMensagem: Boolean);
-    procedure AtualizarModelosRelatoriosEspecificos(MostrarMensagem: Boolean);
-    procedure AtualizarDeptoPessoal(MostrarMensagem: Boolean);
-    procedure AtualizarESocial(MostrarMensagem: Boolean);
-    procedure AtualizarLivroFiscal(MostrarMensagem: Boolean);
-    procedure AtualizarContabilidade(MostrarMensagem: Boolean);
-    procedure AtualizarModelosUnidadesCodificacao(MostrarMensagem: Boolean);
-    procedure AtualizarModelosProcessamentos(MostrarMensagem: Boolean);
-    {$endregion}
-
-    procedure ExecutaRelatorioGR(CodigoRel: Integer; Filtros: OleVariant; Formato: Integer; ProcessarLocal, EmSegundoPlano: Boolean);
-
-    function PegaEmpresaDoMovimentoEstoque(iEmp: Integer): Integer;
-    function PegaEmpresasFicticias(iEmp: Integer): String;
-
-    procedure AbrirArquivoDoAlert(Sender: TObject);
-
-    procedure DBGridToClipBoard(DBGrid: TDBGrid; ComCabecalho, ApenasLinhaAtual, ApenasColunaAtual: Boolean);
-    procedure HabilitarOpcaoDeFiltrarGrade(Grade: TDBGrid);
-
-    // Funcoes utilizadas como property nas Units de emissão de NFe/CTe/MDFe
-    function Funcao_AcbrExecuteCommand(s: string): int64;
-    function Funcao_AcbrExecuteReader(s: string): OleVariant;
-    function Funcao_AcbrExecuteScalar(s: string): OleVariant;
-    function Funcao_AcbrProximoCodigo(s: string): OleVariant;
-
-    procedure CallBack_AbreTela(ID: string; Mensagem: string = '');
-    procedure CallBack_FechaTela(ID: string);
-    procedure CallBack_Mensagem(ID, Mensagem: string);
-    procedure CallBack_Incremento(ID: string; Atual, Total: Integer; Mensagem: string = '');
-
-    // -- \\
-    procedure MostrarLog(TextoDoLog: string; MostrarNoRichEdit: Boolean = True; ExibirLandscape: Boolean = false); overload; deprecated 'Usar ULogSistema.Mostrar ...';
-    procedure MostrarLog(TextoDoLog: TStrings; MostrarNoRichEdit: Boolean = True; ExibirLandscape: Boolean = false); overload; deprecated 'Usar ULogSistema.Mostrar ...';
-    procedure MostrarLog(MostrarNoRichEdit: Boolean; NomeDoArquivoDeLog: WideString; ExibirLandscape: Boolean = false); overload; deprecated 'Usar ULogSistema.Mostrar ...';
-    procedure MostrarLog(DataSet: TClientDataSet; NomeDoCampo: String; Titulo: string = ''; ExibirLandscape: Boolean = false); overload; deprecated 'Usar ULogSistema.Mostrar ...';
-    procedure MostrarLog(TextoDoLog, Titulo: String; MostrarNoRichEdit: Boolean = True; ExibirLandscape: Boolean = false); overload; deprecated 'Usar ULogSistema.Mostrar ...';
-    // -- \\
-
-    property Config: TConfigNovo read fConfig write fConfig;
-    property SecaoAtual: TClassSecaoNovo read fSecaoAtual;
-
-    property CodigoClienteTek: string read FCodigoClienteTek;
-    property CNPJClienteTek: string read FCNPJClienteTek;
-    property NomeClienteTek: string read FNomeClienteTek;
-    property EmpresasDisponiveis: string read FEmpresasDisponiveis;
   end;
 
 var
@@ -363,42 +110,11 @@ const
 
 implementation
 
-uses Constantes, ConstanteSistema, ConstantesRelatorios, ConstantesCallBack,
-  FuncoesDataSnap, TrataErros, Debug, Encrypt_decrypt,
-  ClassArquivoINI, ClassCaixasDeDialogos, ClassFuncoesNumero, ClassFuncoesString, ClassFuncoesSistemaOperacional, ClassFuncoesConversao,
-  ClassFuncoesBaseDados, ClassHelperGrid, ClassHelperDataSet, ClassFuncoesCriptografia, ClassFuncoesData,
-  ClassGerarRelatorioEspecifico, ClassMensagens, ClassCntrlDiasUteis, ClassPaiProcessamento,
-  ConstantesModelosProcessamentos, ConstantesModelosUnidadesCodificacao, Funcoes_TekConnects, GetTexts
-  {$IF DEFINED(FATURAMENTO) OR DEFINED(ESTOQUE) OR DEFINED(LIVROSFISCAIS) OR DEFINED(ANEXO)}
-  , FuncoesConfigACBr, ClassConfigNFSe
-  {$ELSEIF DEFINED(ESOCIAL)}
-  , FuncoesConfigACBr, ClassConfigESocial, ClassConfigReInf
-  {$ENDIF}
-  , UConfigServApl, USplash, ULogin, URegresso, UDMDownload, UPrincipal, UAguarde, UAguarde2, UPainelBordo, UFechaTekProt,
-  UDlgSelecionaContaEmail, UPainelBordo2, UDefineFormulaCampo, ULogSistema, UCuboDeDecisao, UTrocaSenha, ConstantesACBrDFe;
+uses Constantes, ClassDataSet;
 {$R *.dfm}
-
-var
-  CntrlDiasNaoUteis: TClassCntrlDiasUteis;
 
 procedure TDMConexao.DataModuleCreate(Sender: TObject);
 begin
-  PrimeiraVezDoTimer := 0;
-  FContadorTransacoesTemporarias := 0;
-  FStatusDeMensagens := cStatusDeMensagens_SemMensagem;
-  FStatusSAC := 0;
-  LendoHelp := false;
-  ConexaoTratada := false;
-
-  ApplicationEvents1.OnMessage := nil; // Será recolocado quando a tela principal for exibida
-
-  FSplash.Passo(15, 'Configurando e Testando Ambiente');
-  TFuncoesSistemaOperacional.AcertarConfigRegional;
-  if not TFuncoesSistemaOperacional.ImpressoraInstalada then
-    begin
-      TCaixasDeDialogo.Informacao('Não existem impressoras instaladas nesse computador. Instale uma e volte a executar o sistema');
-      FecharSistema;
-    end;
 
   ClassArquivoINI.TArquivoINI.NomeArquivoPadrao := Constantes.ArquivoIniClient;
   ClassArquivoINI.TArquivoINI.PathArquivoPadrao := ExtractFilePath(Application.ExeName);
@@ -438,31 +154,6 @@ begin
 
   Debug.PopupMenuGradeDebugDataSet := PopupMenuGrid;
 
-{$IF DEFINED(FATURAMENTO) OR DEFINED(ESTOQUE) OR DEFINED(LIVROSFISCAIS) OR DEFINED(ANEXO)}
-  if not ClassFuncoesSistemaOperacional.IsDebuggerPresent() then
-    begin
-      TThread.CreateAnonymousThread(
-        procedure()
-        begin
-          TClassConfigACBr.ExtraiSchemasXMLNFe(ConstantesACBrDFe.sisERP);
-          TClassConfigCTe.ExtraiSchemasXMLCTe(ConstantesACBrDFe.sisERP);
-          TClassConfigMDFe.ExtraiSchemasXMLMDFe(ConstantesACBrDFe.sisERP);
-          TClassConfigNFSe.ExtraiSchemasXMLNFSe(ConstantesACBrDFe.sisERP, NomeSchemaProvedorNFSe(DMConexao.SecaoAtual.Parametro.NFSe_Provedor));
-        end
-        ).Start;
-    end;
-{$ELSEIF DEFINED(ESOCIAL)}
-  if not ClassFuncoesSistemaOperacional.IsDebuggerPresent() then
-    begin
-      TThread.CreateAnonymousThread(
-        procedure()
-        begin
-          TClassConfigESocial.ExtraiSchemasXMLESocial(ConstantesACBrDFe.sisERP, '');
-          TClassConfigReInf.ExtraiSchemasXMLReInf(ConstantesACBrDFe.sisERP, '');
-        end
-        ).Start;
-    end;
-{$ENDIF}
   Flag_EnviandoRelatorioFastReport := false;
   DestinatarioPadraoEmailRelatorio := '';
   AssuntoPadraoEmailRelatorio := '';
@@ -526,187 +217,12 @@ begin
   Constantes.DMConexaoExistente := nil;
 end;
 
-{$REGION 'TekProt'}
-procedure TDMConexao.AposValidar(Sender: TObject; prResult: TVlResult);
+
+function TDMConexao.ExecutaMetodo(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
 begin
-  if (prResult.ResultCod = 'VLTPSRV101') then
-    TCaixasDeDialogo.Informacao('Estação habilitada com sucesso!')
-  else if (prResult.ResultCod = 'VLTPSRV102') then
-    begin
-      ExecuteMethods('TSMConexao.AtribuirSistemaSomenteLeitura', []);
-      CarregaSecaoAtual;
-      TCaixasDeDialogo.Informacao('Sistema está operando em modo somente-leitura');
-    end
-  else if (prResult.ResultCod <> 'VLTPSRV100') and
-          (prResult.ResultCod <> 'VLTPSRV101') then
-  begin
-    if TCaixasDeDialogo.Confirma(prResult.ResultMsg + #13 + 'Deseja configurar servidor de proteção?') then
-      begin
-        ChamarConfig(True);
-        TekProtClient.validarLicenca;//(60 * 60 * 1000);
-      end
-    else
-      FecharSistema;
-  end;
+  Result := FuncoesDataSnap.ExecutaMetodo_Sincrono(SQLConexao, Metodo, Parametros_Valor, false);
 end;
 
-procedure TDMConexao.QuandoNaoAutorizado(Sender: TObject; prResult: TVlResult);
-var tpDateTime: TDateTime;
-begin
-  TCaixasDeDialogo.Aviso(
-    'Problemas ao efetuar validação da sua estação de trabalho.' + #13 +
-    'Salve as informações não gravadas pois o sistema será finalizado. ' + #13#13 +
-    'Mensagem retornada: ' + prResult.ResultMsg);
-
-  fFechamentoTekProt := TfFechamentoTekProt.Create(Self);
-  try
-    fFechamentoTekProt.Show;
-    tpDateTime := EncodeTime(0, 1, 0, 0);
-    while FormatDateTime('nn:ss', tpDateTime) <> '00:00' do
-      begin
-        tpDateTime := IncSecond(tpDateTime, -1);
-        fFechamentoTekProt.Label1.Caption := 'Estação não liberada para uso' + #13 +
-                                             'Sistema será finalizado.' + #13#13 +
-                                             'Tempo restante: ' + FormatDateTime('nn:ss', tpDateTime);
-        Application.ProcessMessages;
-        Sleep(1000);
-      end;
-
-    fFechamentoTekProt.Close;
-  finally
-    FreeAndNil(fFechamentoTekProt);
-  end;
-
-  FecharSistema;
-end;
-
-function TDMConexao.FuncionalidadeLiberada(LabelFuncionalidade: String): Boolean;
-var
-  tpClientDataSet:TClientDataSet;
-begin
-  tpClientDataSet := TClientDataSet.Create(Self);
-  try
-    with tpClientDataSet do
-      begin
-        XMLData := FFuncionalidadesDisponiveis;
-        IndexFieldNames := 'ALIAS';
-        First;
-        Result := FindKey([AnsiUpperCase(LabelFuncionalidade)]);
-        Close;
-      end;
-  finally
-    if Assigned(tpClientDataSet) then
-      FreeAndNil(tpClientDataSet);
-  end;
-end;
-
-function TDMConexao.ExecucaoDeProcessamentoLiberado(CodigoTekSystemDoProcessamento: string): Boolean;
-var I: Integer;
-begin
-  Result := True;
-
-  if (Trim(CodigoTekSystemDoProcessamento) <> '') then
-    for I := Low(mModelosProcessamentos) to High(mModelosProcessamentos) do
-      if (AnsiUpperCase(mModelosProcessamentos[I, 1]) = AnsiUpperCase(CodigoTekSystemDoProcessamento)) then
-        begin
-          if (Trim(mModelosProcessamentos[I, 4]) <> '') and
-             (not DMConexao.FuncionalidadeLiberada(mModelosProcessamentos[I, 4])) then
-            begin
-              TCaixasDeDialogo.Informacao(
-                'Para executar este processamento (' + CodigoTekSystemDoProcessamento + ') é necessário que a Tek-System libere sua execução.' + #13#13 +
-                'Favor entrar em contato, informando o nome da funcionalidade: ' + mModelosProcessamentos[I, 4]);
-              Result := False;
-            end;
-          Break;
-        end;
-end;
-
-procedure TDMConexao.VerificarUsoUnidadeCodificaoLiberado(CodigoTekSystemDaUnidadeCodifica: string);
-var I: Integer;
-begin
-  if (Pos('TEK_', AnsiUpperCase(CodigoTekSystemDaUnidadeCodifica)) = 1) then
-    for I := Low(mModelosUnits) to High(mModelosUnits) do
-      if (AnsiUpperCase(mModelosUnits[I, 1]) = AnsiUpperCase(CodigoTekSystemDaUnidadeCodifica)) then
-        begin
-          if (Trim(mModelosUnits[I, 3]) <> '') and
-             (not DMConexao.FuncionalidadeLiberada(mModelosUnits[I, 3])) then
-            begin
-              raise EFuncionalidadeNaoLiberada.Create(
-                'Para executar/usar a unidade de codificação ' + CodigoTekSystemDaUnidadeCodifica + ' é necessário que a Tek-System faça a liberação.' + #13#13 +
-                'Favor entrar em contato, informando o nome da funcionalidade: ' + mModelosUnits[I, 3]);
-            end;
-          Break;
-        end;
-end;
-{$ENDREGION}
-
-{$REGION 'Execução de Metodos'}
-
-function TDMConexao.ExecuteMethods(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
-begin
-  // FINALIDADE: Executa metodo no servidor de aplicação
-  // No parametro "Metodo" deve passar o TNomeSM.NomeFuncao, ex: ExecuteMethods('TSMConexao.DataHora', [])
-
-  // Para processamentos mais demorados de preferencia em utilizar o método ExecuteMethods_ComCallBack
-  // ATENÇÃO: Ao executa essa função dependendo do que é executado no metodo no servidor os calls vão chegar tudo de uma
-  // vez no termino processo, nessa situação utilize o método ExecuteMethods_ComCallBack
-
-  Result := FuncoesDataSnap.ExecuteMethods_Sincrono(SQLConexao, Metodo, Parametros_Valor, false);
-end;
-
-function TDMConexao.ExecuteMethods_ComCallBack(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
-var
-  CriouTela: Boolean;
-  EmProcessoAnt: Boolean;
-begin
-  // Para processamentos mais rápidos de preferencia em utilizar o método ExecuteMethods.
-  // ATENÇÃO: Esse método faz a chamada do metódo do servidor dentro de uma Thread, assim o sistema ficaria livre para o usuário
-  // manipular o sistema durante o processamento, assim, a função irá criar "película" para evitar o uso durante o processamento.
-
-  EmProcessoAnt := EmProcesso;
-  CriouTela := TFAguarde2.Ativar;
-  try
-    EmProcesso := True;
-    Result := FuncoesDataSnap.ExecuteMethods_Assincrono(SQLConexao, Metodo, Parametros_Valor, false);
-  finally
-    EmProcesso := EmProcessoAnt;
-    if CriouTela then
-      TFAguarde2.Desativar;
-  end;
-end;
-
-function TDMConexao.ExecuteMethods_SegundoPlano(Titulo, Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
-var
-  i: Integer;
-  ParamConexao: TStrings;
-  sParamConexao: string;
-begin
-  // ATENÇÃO: A execução desse metodo cria outra conexão, que é autenticada e executa uma serie de processamento,
-  // assim deve ver ser utilizada com cautela para não sobrecarrega o servidor
-
-  ParamConexao := TStringList.Create;
-  try
-    ParamConexao.Text := SQLConexao.Params.Text;
-    ParamConexao.Values['Guid'] := '';
-    ParamConexao.Values['OmitirAcesso'] := 'S';
-
-    if (DMConexao.Config.ServidorRelatorio <> '') then
-    begin
-      ParamConexao.Values[TDBXPropertyNames.HostName] := DMConexao.Config.ServidorRelatorio;
-      ParamConexao.Values[TDBXPropertyNames.Port] := IntToStr(DMConexao.Config.PortaRelatorio);
-    end;
-    sParamConexao := ParamConexao.Text;
-  finally
-    FreeAndNil(ParamConexao);
-  end;
-
-  i := FPrincipal.Processamento_Add(Titulo);
-  try
-    Result := FuncoesDataSnap.ExecuteMethods_Assincrono(sParamConexao, Metodo, Parametros_Valor, false);
-  finally
-    FPrincipal.Processamento_Del(i);
-  end;
-end;
 
 function TDMConexao.ExecuteScalar(sql: string; MonitoraSQL: Boolean = True): OleVariant;
 var
@@ -720,7 +236,7 @@ begin
   if (FPrincipal <> nil) and (MonitoraSQL) then
     FPrincipal.AdicionaRich('ExecuteScalar', sql);
 
-  Result := ExecuteMethods('TSMConexao.ExecuteScalar', [Trim(sql), True]);
+  Result := ExecutaMetodo('TSMConexao.ExecuteScalar', [Trim(sql), True]);
 
   if (FPrincipal <> nil) and (MonitoraSQL) then
   begin
@@ -741,7 +257,7 @@ begin
   if (FPrincipal <> nil) and (MonitoraSQL) then
     FPrincipal.AdicionaRich('ExecuteReader', sql);
 
-  Result := ExecuteMethods('TSMConexao.ExecuteReader', [Trim(sql), TamanhoPacote, True]);
+  Result := ExecutaMetodo('TSMConexao.ExecuteReader', [Trim(sql), TamanhoPacote, True]);
 
   if (FPrincipal <> nil) and (MonitoraSQL) then
   begin
@@ -763,7 +279,7 @@ begin
   if (FPrincipal <> nil) and (MonitoraSQL) then
     FPrincipal.AdicionaRich('ExecuteCommand', sql);
 
-  Result := TFuncoesConversao.VariantParaInt64(ExecuteMethods('TSMConexao.ExecuteCommand', [Trim(sql), True]));
+  Result := TFuncoesConversao.VariantParaInt64(ExecutaMetodo('TSMConexao.ExecuteCommand', [Trim(sql), True]));
 
   if (FPrincipal <> nil) and (MonitoraSQL) then
   begin
@@ -772,141 +288,8 @@ begin
   end;
 end;
 
-function TDMConexao.ExecuteCommand_Update(sql: WideString; Campo: string; Valor: OleVariant; MonitoraSQL: Boolean = True): int64;
-var
-  Tempo: TTime;
-begin
-  // Executa a função ExecuteCommand_Update do Servidor de Aplicação, que tem o objetivo de
-  // executar comandos tipo update de campos binários e memos, na sql passa o comando sql e
-  // apos o campo afetado e o novo valor;
-  // Retornando o número de registros afetados
 
-  Tempo := Time;
-  if (FPrincipal <> nil) and (MonitoraSQL) then
-    FPrincipal.AdicionaRich('ExecuteCommand_Update', sql);
-
-  Result := TFuncoesConversao.VariantParaInt64(ExecuteMethods('TSMConexao.ExecuteCommand_Update', [Trim(sql), Campo, Valor, True]));
-
-  if (FPrincipal <> nil) and (MonitoraSQL) then
-  begin
-    Tempo := Time - Tempo;
-    FPrincipal.AdicionaLinhaRich('Tempo Gasto em ExecuteCommand_Update ==> ' + FormatDateTime(' hh:mm:ss.zzz', Tempo), clGreen, [fsBold]);
-  end;
-end;
-
-function TDMConexao.CallbackMethod(const Args: TJSONValue): TJSONValue;
-var
-  LJSONObject: TJSONObject;
-  LJSONPair: TJSONPair;
-  allValues: TJSONArray;
-  TipoDeMensagem, Atual, Total: Integer;
-  ID, AMessage, NomeRemetente: string;
-begin
-  LJSONObject := TJSONObject(Args);
-  LJSONPair := LJSONObject. {$IFDEF VER230} Get(0) {$ELSE} Pairs[0] {$ENDIF};
-
-  TipoDeMensagem := TJSONNumber(LJSONPair.JsonString).AsInt;
-
-  try
-    allValues := TJSONArray(LJSONPair.JsonValue);
-    ID := allValues. {$IFDEF VER230} Get(0) {$ELSE} Items[0] {$ENDIF} .ToString;
-
-    if (TipoDeMensagem = EvCallBack_IncrementaProgresso) then
-    begin
-      Atual := StrToInt(allValues. {$IFDEF VER230} Get(1) {$ELSE} Items[1] {$ENDIF} .Value);
-      Total := StrToInt(allValues. {$IFDEF VER230} Get(2) {$ELSE} Items[2] {$ENDIF} .Value);
-      AMessage := allValues. {$IFDEF VER230} Get(3) {$ELSE} Items[3] {$ENDIF} .ToString;
-    end
-    else if (TipoDeMensagem = EvCallBack_NovaMensagem) then
-    begin
-      Atual := StrToInt(allValues. {$IFDEF VER230} Get(1) {$ELSE} Items[1] {$ENDIF} .Value);
-      NomeRemetente := allValues. {$IFDEF VER230} Get(2) {$ELSE} Items[2] {$ENDIF} .ToString;
-      AMessage := allValues. {$IFDEF VER230} Get(3) {$ELSE} Items[3] {$ENDIF} .ToString;
-
-    end
-    else if (TipoDeMensagem <> EvCallBack_FechaTelaMensagem) then
-      AMessage := allValues. {$IFDEF VER230} Get(1) {$ELSE} Items[1] {$ENDIF} .ToString
-  except
-    //
-  end;
-
-  TThread.Queue(nil,
-    procedure
-    begin
-
-      case TipoDeMensagem of
-        EvCallBack_AbreTelaMensagem:
-          begin
-            TFAguarde.Ativar(ID, AMessage);
-          end;
-        EvCallBack_FechaTelaMensagem:
-          begin
-            TFAguarde.Desativar(ID);
-          end;
-        EvCallBack_Status:
-          begin
-            TFAguarde.Mensagem(ID, AMessage);
-          end;
-        EvCallBack_IncrementaProgresso:
-          begin
-            TFAguarde.IncrementaProgresso(ID, Atual, Total);
-            if (AMessage <> '') and (AMessage <> '""') then
-              TFAguarde.Mensagem(ID, AMessage);
-          end;
-        EvCallBack_NovaMensagem:
-          begin
-            if (StrToInt(ID) >= 0) and (StatusDeMensagens >= 0) then
-              StatusDeMensagens := FStatusDeMensagens + 1
-            else
-              StatusDeMensagens := StrToInt(ID);
-          end;
-        EvCallBack_MensagemLida:
-          begin
-            if FStatusDeMensagens > 0 then
-              StatusDeMensagens := FStatusDeMensagens - 1
-            else
-              CarregaMensagem;
-          end;
-        EvCallBack_ShutDown:
-          begin
-            TrataMensagemDeFechamento(false);
-          end;
-        EvCallBack_SACAberto:
-          begin
-            StatusSAC := StrToInt(AMessage);
-          end;
-      end;
-    end);
-
-  Result := TJSONTrue.Create;
-end;
-
-procedure TDMConexao.CallBack_AbreTela(ID, Mensagem: string);
-begin
-  TFAguarde.Ativar(ID, Mensagem);
-end;
-
-procedure TDMConexao.CallBack_FechaTela(ID: string);
-begin
-  TFAguarde.Desativar(ID);
-end;
-
-procedure TDMConexao.CallBack_Mensagem(ID, Mensagem: string);
-begin
-  TFAguarde.Mensagem(ID, Mensagem);
-end;
-
-procedure TDMConexao.CallBack_Incremento(ID: string; Atual, Total: Integer; Mensagem: string);
-begin
-  TFAguarde.IncrementaProgresso(ID, Atual, Total);
-  if Mensagem <> '' then
-    TFAguarde.Mensagem(ID, Mensagem);
-end;
-{$ENDREGION}
-
-{$REGION 'Componentes do DM'}
-
-procedure TDMConexao.SQLConexaoAfterConnect(Sender: TObject);
+procedure TDMConexao.ConexaoDSAfterConnect(Sender: TObject);
 var
   Ret: OleVariant;
 begin
@@ -922,14 +305,14 @@ begin
     FSplash.Passo(45, 'Tratando Conexão');
   end;
 
-  Ret := ExecuteMethods('TSMConexao.InformacoesDaConexaoBDD', []);
-  ServidorBDD := Ret[0]; // ExecuteMethods('TSMConexao.ConexaoBDD', []);
-  VersaoBDD := Ret[1]; // ExecuteMethods('TSMConexao.VersaoBDD', []);
-  ConexaoBDD_Tipo := Ret[2]; // ExecuteMethods('TSMConexao.ConexaoBDD_Tipo', []);
+  Ret := ExecutaMetodo('TSMConexao.InformacoesDaConexaoBDD', []);
+  ServidorBDD := Ret[0]; // ExecutaMetodo('TSMConexao.ConexaoBDD', []);
+  VersaoBDD := Ret[1]; // ExecutaMetodo('TSMConexao.VersaoBDD', []);
+  ConexaoBDD_Tipo := Ret[2]; // ExecutaMetodo('TSMConexao.ConexaoBDD_Tipo', []);
   DriverBDDAtual := Ret[3];
 end;
 
-procedure TDMConexao.SQLConexaoAfterDisconnect(Sender: TObject);
+procedure TDMConexao.ConexaoDSAfterDisconnect(Sender: TObject);
 begin
   CallBack.DesRegistraCallBack(SecaoAtual.Usuario.Nome);
 end;
@@ -984,1126 +367,17 @@ begin
   end;
 end;
 
-procedure TDMConexao.CDSServidoresTipoGetText(Sender: TField; var Text: string; DisplayText: Boolean);
-begin
-  if (Sender.DataSet.IsEmpty) then
-  begin
-    Text := '';
-    Exit;
-  end;
-
-  case Sender.AsInteger of
-    cServTipo_SoftwareCenter:
-      Text := 'SoftwareCenter';
-    cServTipo_TekServer:
-      Text := 'TekServer';
-    else
-      Text := Sender.AsString;
-  end;
-end;
-
-procedure TDMConexao.ApplicationEvents1Exception(Sender: TObject; E: Exception);
-begin
-  TrataErro(E);
-end;
-
-procedure TDMConexao.ApplicationEvents1Message(var Msg: tagMSG; var Handled: Boolean);
-begin
-  if not Debugando then
-  begin
-    TrataOciosidade(Msg);
-    TrataHelp(Msg);
-  end;
-end;
-
-procedure TDMConexao.OcultarColuna1Click(Sender: TObject);
-var
-  Grade: TDBGrid;
-begin
-  // Oculta a coluna selecionada da grade
-  if not(Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  Grade := (Screen.ActiveControl as TDBGrid);
-
-  Grade.OcultarColuna(Grade.SelectedField.FieldName);
-end;
-
-procedure TDMConexao.ReexibirColunas1Click(Sender: TObject);
-begin
-  // Torna visível todas as colunas da grade
-  if not(Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  TDBGrid(Screen.ActiveControl).ReexibirColunas;
-end;
-
-procedure TDMConexao.AutoAjusteColunas1Click(Sender: TObject);
-begin
-  if not(Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  TDBGrid(Screen.ActiveControl).AutoAjustarTamanhoDeColunas;
-end;
-
-procedure TDMConexao.PesquisaIncremental1Click(Sender: TObject);
-begin
-  // Permite fazer uma pesquisa incremental na grade
-  if not(Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  TekPesquisaGrid1.Grid := TDBGrid(Screen.ActiveControl);
-
-  KeyNavigator1.Active := false;
-  try
-    TekPesquisaGrid1.Pesquisar;
-  finally
-    KeyNavigator1.Active := True;
-  end;
-end;
-
-procedure TDMConexao.PopupMenuGridPopup(Sender: TObject);
-var
-  i, J: Integer;
-  CampoNumerico, CampoDataHora, Bloqueado, PossuiColunaMarcacao: Boolean;
-  MenuItemPai, MenuItem: TMenuItem;
-
-  function RetiraEComercial(s: string): string;
-  begin
-    Result := TFuncoesString.Trocar(s, '&', '');
-  end;
-
-begin
-  if (not (Screen.ActiveControl is TDBGrid)) or
-     ((EmProcesso) and (not InteracaoRequerida)) then
-    Abort;
-
-  if (Screen.ActiveControl is TJvDBGrid) then
-  begin
-    OcultarColuna1.Enabled   := (Screen.ActiveControl as TJvDBGrid).TitleArrow;
-    ReexibirColunas1.Enabled := (Screen.ActiveControl as TJvDBGrid).TitleArrow;
-  end;
-
-  CampoNumerico        := False;
-  CampoDataHora        := False;
-  Bloqueado            := True;
-  PossuiColunaMarcacao := False;
-
-  if (Screen.ActiveControl is TDBGrid) then
-    with (Screen.ActiveControl as TDBGrid) do
-      if (SelectedField <> nil) then // Se a grid está sem colunas dá erro na linha abaixo
-        begin
-          CampoNumerico        := SelectedField.CampoTipoNumerico;
-          CampoDataHora        := SelectedField.CampoTipoData;
-          PossuiColunaMarcacao := Assigned(TDBGrid(Screen.ActiveControl).ProcurarColunaPeloNome('MARQUE'));
-
-          Bloqueado :=
-            ReadOnly or (not Enabled) or
-            (SelectedField.ReadOnly) or
-            (TDBGrid(Screen.ActiveControl).ColunaPeloNome(SelectedField.FieldName).ReadOnly) or
-            (TClientDataSet(DataSource.DataSet).ReadOnly) or
-            (TClientDataSet(DataSource.DataSet).FindField(SelectedField.FieldName).ReadOnly);
-        end;
-
-  if Sender = PopupMenuGrid then
-  begin
-    SomarColuna1.Visible := CampoNumerico or CampoDataHora;
-    MediaColuna1.Visible := CampoNumerico or CampoDataHora;
-
-    ContarRegistrosMarcados1.Visible                           := PossuiColunaMarcacao;
-    SeparadorOpcoesAgregacao.Visible                           := PossuiColunaMarcacao;
-    SomarColunaapenasdosRegistrosMarcados1.Visible             := SomarColuna1.Visible and (PossuiColunaMarcacao);
-    MediaAritmeticadaColunaapenasdosRegistrosMarcados1.Visible := MediaColuna1.Visible and (PossuiColunaMarcacao);
-
-    FuncoesdeAtribuicao.Visible := not Bloqueado;
-    Arredondarpara2casasdecimais.Visible := CampoNumerico and (not Bloqueado);
-    Arredondarpara1casadecimal.Visible := CampoNumerico and (not Bloqueado);
-    Arredondarparaunidade.Visible := CampoNumerico and (not Bloqueado);
-    Arredondarparadezena.Visible := CampoNumerico and (not Bloqueado);
-    Ajustarparaprximointeiro.Visible := CampoNumerico and (not Bloqueado);
-    Ajustarparainteiroanterior.Visible := CampoNumerico and (not Bloqueado);
-  end
-  else if Sender is TPopupMenu then
-    for i := 0 to TPopupMenu(Sender).Items.Count - 1 do
-    begin
-      MenuItem := TPopupMenu(Sender).Items[i];
-      if (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(FuncoesdeAtribuicao.Caption)) then
-      begin
-        MenuItem.Visible := not Bloqueado;
-        MenuItemPai := MenuItem;
-        for J := MenuItemPai.Count - 1 downto 0 do
-        begin
-          MenuItem := MenuItemPai.Items[J];
-          if (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(Arredondarpara2casasdecimais.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(Arredondarpara1casadecimal.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(Arredondarparaunidade.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(Arredondarparadezena.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(Ajustarparaprximointeiro.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(Ajustarparainteiroanterior.Caption)) then
-            MenuItem.Visible := CampoNumerico and (not Bloqueado);
-        end;
-      end
-      else if (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(FuncoesdeAgregacao1.Caption)) then
-      begin
-        MenuItemPai := MenuItem;
-        for J := MenuItemPai.Count - 1 downto 0 do
-        begin
-          MenuItem := MenuItemPai.Items[J];
-
-          if (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(SomarColuna1.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(MediaColuna1.Caption)) then
-            MenuItem.Visible := CampoNumerico or CampoDataHora;
-
-          if (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(SomarColunaapenasdosRegistrosMarcados1.Caption)) or
-             (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(MediaAritmeticadaColunaapenasdosRegistrosMarcados1.Caption)) then
-            MenuItem.Visible := (CampoNumerico or CampoDataHora) and (PossuiColunaMarcacao);
-
-          if (RetiraEComercial(MenuItem.Caption) = RetiraEComercial(ContarRegistrosMarcados1.Caption)) then
-            MenuItem.Visible := PossuiColunaMarcacao;
-        end;
-      end;
-    end;
-end;
-
-procedure TDMConexao.Exportar1Click(Sender: TObject);
-var
-  NomeArquivo: string;
-  Grade: TDBGrid;
-  CDS, Clone: TClientDataSet;
-begin
-  // Permite exportar o conteúdo da grade para diversos tipos diferentes de arquivos
-  if not(Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  SaveDialogGrid.InitialDir := Config.DirTemp;
-
-  if SaveDialogGrid.Execute then
-  begin
-    Grade := (Screen.ActiveControl as TDBGrid);
-    NomeArquivo := SaveDialogGrid.Filename;
-    // HTML é o único formato que despreza as colunas invisíveis
-    // pois é feito pela grid e não pelo dataset.
-    // Justificativa - é o único que não será manipulado porteriormente
-    case SaveDialogGrid.FilterIndex of
-      1: // CSV
-        with DataSetParaCSV1 do
-        begin
-          Extensao := '.CSV';
-          NomeArquivo := ChangeFileExt(NomeArquivo, Extensao);
-          ArquivoBase := NomeArquivo;
-          DataSet := Grade.DataSource.DataSet;
-          MaximoRegistrosPorArquivo := 31999;
-          Separador := ',';
-          Delimitador := '"';
-          Executar;
-          TCaixasDeDialogo.Informacao(NomeArquivo + ' gerado com sucesso');
-        end;
-      2: // HTML
-        with GridParaHTML1 do
-        begin
-          NomeArquivo := ChangeFileExt(NomeArquivo, '.HTML');
-          Arquivo := NomeArquivo;
-          CabecalhoFontePadrao := True;
-          CorpoFontePadrao := True;
-          DBGrid := Grade;
-          Titulo := Modulos[Sistema, 2] + ' - ' + Screen.FocusedForm.Caption;
-          Rodape := SecaoAtual.Empresa.Nome + ' - ' + SecaoAtual.Usuario.Nome;
-          Executar;
-        end;
-      3: // XML
-        if (Grade.DataSource.DataSet is TClientDataSet) then
-        begin
-          NomeArquivo := ChangeFileExt(NomeArquivo, '.XML');
-          CDS := (Grade.DataSource.DataSet as TClientDataSet);
-          with CDS do
-          begin
-            if (DataSetField = nil) then
-              SaveToFile(NomeArquivo, dfXMLUTF8)
-            else
-            begin
-              Clone := TClientDataSet.Create(nil);
-              try
-                Clone.Clonar(CDS);
-                Clone.SaveToFile(NomeArquivo, dfXMLUTF8);
-              finally
-                FreeAndNil(Clone);
-              end;
-            end;
-          end;
-          TCaixasDeDialogo.Informacao(NomeArquivo + ' gerado com sucesso');
-        end
-        else
-          TCaixasDeDialogo.Informacao('Essa grade não pode ser exportada para esse formato, tente outro');
-      4: // CDS
-        if (Grade.DataSource.DataSet is TClientDataSet) then
-        begin
-          NomeArquivo := ChangeFileExt(NomeArquivo, '.CDS');
-          CDS := (Grade.DataSource.DataSet as TClientDataSet);
-          with CDS do
-          begin
-            if (DataSetField = nil) then
-              SaveToFile(NomeArquivo, dfBinary)
-            else
-              try
-                Clone := TClientDataSet.Create(nil);
-                Clone.Clonar(CDS);
-                Clone.SaveToFile(NomeArquivo, dfBinary);
-              finally
-                Clone.Free;
-              end;
-          end;
-          TCaixasDeDialogo.Informacao(NomeArquivo + ' gerado com sucesso');
-        end
-        else
-          TCaixasDeDialogo.Informacao('Essa grade não pode ser exportada para esse formato, tente outro');
-      5: // TXT
-        with DataSetParaCSV1 do
-        begin
-          Extensao := '.TXT';
-          NomeArquivo := ChangeFileExt(NomeArquivo, Extensao);
-          ArquivoBase := NomeArquivo;
-          DataSet := Grade.DataSource.DataSet;
-          MaximoRegistrosPorArquivo := 0;
-          Separador := #9;
-          Delimitador := '';
-          Executar;
-          TCaixasDeDialogo.Informacao(NomeArquivo + ' gerado com sucesso');
-        end;
-    end;
-    Grade.SetFocus;
-  end;
-end;
-
-procedure TDMConexao.Todaagrade1Click(Sender: TObject);
-begin
-  if (Screen.ActiveControl is TDBGrid) then
-    DBGridToClipBoard((Screen.ActiveControl as TDBGrid), True, false, false);
-end;
-
-procedure TDMConexao.ApenasClulaatual1Click(Sender: TObject);
-begin
-  if (Screen.ActiveControl is TDBGrid) then
-    (Screen.ActiveControl as TDBGrid).CopiarCelulaParaClipBoard;
-end;
-
-procedure TDMConexao.ApenasColunaAtual1Click(Sender: TObject);
-begin
-  if (Screen.ActiveControl is TDBGrid) then
-    DBGridToClipBoard((Screen.ActiveControl as TDBGrid), True, false, True);
-end;
-
-procedure TDMConexao.ApenasLinhaAtual1Click(Sender: TObject);
-begin
-  if (Screen.ActiveControl is TDBGrid) then
-    DBGridToClipBoard((Screen.ActiveControl as TDBGrid), True, True, false);
-end;
-
-procedure TDMConexao.ContarRegistros1Click(Sender: TObject);
-const
-  ContarTodos          = 0;
-  ContarApenasMarcados = 1;
-var
-  Registros, Opcao: Integer;
-begin
-  if not (Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  if not (Sender is TMenuItem) then
-    Exit;
-
-  Opcao := TMenuItem(Sender).Tag;
-
-  Registros := (Screen.ActiveControl as TDBGrid).ContarRegistros(Opcao = ContarApenasMarcados);
-
-  if (Registros = -1) then
-    TCaixasDeDialogo.Informacao('Não é possível contar os registros dessa grade nesse momento.')
-  else
-    TCaixasDeDialogo.Informacao('Essa grade contém ' + IntToStr(Registros) + ' registro(s)' + ifThen(Opcao = ContarTodos, '', ' marcado(s)'));
-end;
-
-procedure TDMConexao.SomarOuMediaColuna1Click(Sender: TObject);
-const
-  OperacaoSomar         = 1;
-  OperacaoMedia         = 2;
-  OperacaoSomarMarcados = 3;
-  OperacaoMediaMarcados = 4;
-var
-  Grade: TDBGrid;
-  Operacao: Integer;
-  OperacaoPermitida, MascaraDeData: Boolean;
-  Resultado: Double;
-  Mensagem: string;
-begin
-  if (Screen.ActiveControl is TDBGrid) then
-    Grade := (Screen.ActiveControl as TDBGrid)
-  else
-    Exit;
-
-  Operacao := (Sender as TMenuItem).Tag;
-
-  OperacaoPermitida := Grade.SelectedField.CampoTipoNumerico or
-                       Grade.SelectedField.CampoTipoData;
-
-  MascaraDeData := (Pos('/', Grade.SelectedField.EditMask) > 0);
-
-  if (not OperacaoPermitida) then
-    begin
-      TCaixasDeDialogo.Informacao('Operação não permitida para o campo posicionado na grade.');
-      Exit;
-    end;
-
-  Resultado := 0;
-  Mensagem  := '';
-  case Operacao of
-    OperacaoSomar:
-      begin
-        if MascaraDeData then
-          begin
-            TCaixasDeDialogo.Informacao('A soma de datas não tem significado.');
-            Exit;
-          end;
-        Mensagem  := 'A soma';
-        Resultado := Grade.SomarColuna(Grade.SelectedField.FieldName, False);
-      end;
-    OperacaoMedia:
-      begin
-        Mensagem  := 'A média aritmética';
-        Resultado := Grade.MediaColuna(Grade.SelectedField.FieldName, False);
-      end;
-    OperacaoSomarMarcados:
-      begin
-        if MascaraDeData then
-          begin
-            TCaixasDeDialogo.Informacao('A soma de datas não tem significado.');
-            Exit;
-          end;
-        Mensagem  := 'A soma';
-        Resultado := Grade.SomarColuna(Grade.SelectedField.FieldName, True);
-      end;
-    OperacaoMediaMarcados:
-      begin
-        Mensagem  := 'A média aritmética';
-        Resultado := Grade.MediaColuna(Grade.SelectedField.FieldName, True);
-      end;
-  end;
-
-  Mensagem := Mensagem + ' do campo "' + Grade.SelectedField.DisplayName + '" é ';
-
-  if Grade.SelectedField.CampoTipoNumerico then
-    Mensagem := Mensagem + FormatFloat('#,##0.00####', Resultado)
-  else
-    begin
-      if (Pos('/', Grade.SelectedField.EditMask) > 0) then
-        Mensagem := Mensagem + FormatDateTime(sDisplayFormatDataHora_HoraMinSeg, Resultado)
-      else
-        Mensagem := Mensagem + TFuncoesData.DateTimeParaHMS(Resultado, True);
-    end;
-
-  TCaixasDeDialogo.Informacao(Mensagem);
-end;
-
-procedure TDMConexao.AtribuicaoClick(Sender: TObject);
-var
-  Funcao: Integer;
-  Mens, NovoValor: string;
-  Grade: TDBGrid;
-  CDS: TClientDataSet;
-  Campo: TField;
-  Coluna: TColumn;
-
-  procedure ProcessaRegistro;
-  begin
-    if (Coluna.ReadOnly) or (Grade.SelectedField.ReadOnly) or (Campo.ReadOnly) then
-      Exit;
-
-    case Funcao of
-      1: // formula
-        NovoValor := FDefineFormulaCampo.Executa;
-      2: // arredondamento para 2 casas decimais
-        NovoValor := FloatToStr(TFuncoesNumero.Arredondar(Campo.AsExtended, 2));
-      3: // arredondamento para 1 casas decimais
-        NovoValor := FloatToStr(TFuncoesNumero.Arredondar(Campo.AsExtended, 1));
-      4: // arredondar para unidade
-        NovoValor := FloatToStr(TFuncoesNumero.Arredondar(Campo.AsExtended, 0));
-      5: // arredondar para dezena
-        NovoValor := FloatToStr(TFuncoesNumero.Arredondar(Campo.AsExtended, -1));
-      6: // ajuste para o próximo inteiro
-        NovoValor := FloatToStr(Ceil(Campo.AsExtended));
-      7: // ajuste para o inteiro anterior
-        NovoValor := FloatToStr(Trunc(Campo.AsExtended));
-    end;
-
-    if (NovoValor = Campo.AsString) then
-      Exit;
-
-    CDS.Edit;
-    Campo.Value := NovoValor;
-    CDS.Post;
-  end;
-
-  procedure ProcessaRegistros;
-  var
-    BM: TBookMark;
-  begin
-    if not TCaixasDeDialogo.Confirma('Executar para todos?') then
-    begin
-      ProcessaRegistro;
-      Exit;
-    end;
-
-    with CDS do
-    begin
-      BM := GetBookmark;
-      DisableControls;
-      try
-        FPrincipal.IniciaLoop(RecordCount);
-        First;
-        while (not eof) do
-        begin
-          FPrincipal.AtualizaLoop(RecNo);
-          ProcessaRegistro;
-          Next;
-        end;
-        if BookmarkValid(BM) then
-          GotoBookmark(BM);
-        if Assigned(Grade.DataSource.OnStateChange) then
-          Grade.DataSource.OnStateChange(CDS);
-      finally
-        EnableControls;
-        FPrincipal.FinalizaLoop;
-      end;
-    end;
-  end;
-
-begin
-  if (Screen.ActiveControl is TDBGrid) then
-    Grade := (Screen.ActiveControl as TDBGrid)
-  else
-    Exit;
-
-  if (not Assigned(Grade.DataSource)) or (not Assigned(Grade.DataSource.DataSet)) or (not Grade.DataSource.DataSet.Active) then
-    begin
-      TCaixasDeDialogo.Informacao('Fonte de dados não preperada');
-      Exit;
-    end;
-
-  if Grade.DataSource.DataSet.IsEmpty then
-    begin
-      TCaixasDeDialogo.Informacao('Não existem registros nesta grade.');
-      Exit;
-    end;
-
-  Funcao := (Sender as TMenuItem).Tag;
-
-  if (not(Funcao in [1,8])) and (not(Grade.SelectedField.CampoTipoNumerico)) then
-  begin
-    TCaixasDeDialogo.Aviso('Esse cálculo só é válido quando um campo numérico está posicionado na grade');
-    Exit;
-  end;
-
-  CDS := TClientDataSet(Grade.DataSource.DataSet);
-  Campo := CDS.FindField(Grade.SelectedField.FieldName);
-  Coluna := Grade.ColunaPeloNome(Grade.SelectedField.FieldName);
-
-  if (Grade.ReadOnly) or (Coluna.ReadOnly) or (Grade.SelectedField.ReadOnly) or (CDS.ReadOnly) or (Campo.ReadOnly) then
-  begin
-    TCaixasDeDialogo.Aviso('Campo bloqueado para alteração');
-    Exit;
-  end;
-
-  if (Funcao = 1) then
-  begin
-    FDefineFormulaCampo := TFDefineFormulaCampo.Create(Self);
-    try
-      FDefineFormulaCampo.NomeFonte := Screen.ActiveForm.ClassName + '.' + Grade.Name;
-      FDefineFormulaCampo.CDS := CDS;
-      FDefineFormulaCampo.Campo := Grade.SelectedField.FieldName;
-      FDefineFormulaCampo.ShowModal;
-    finally
-      if (FDefineFormulaCampo.ModalREsult = mrOK) then
-        ProcessaRegistros;
-      FreeAndNil(FDefineFormulaCampo);
-    end;
-  end
-  else
-  begin
-    if Funcao = 8 then
-    begin
-      Mens := '';
-      if not TCaixasDeDialogo.Responda_2('Informe o valor fixo', 'Valor', Mens) then
-        Exit;
-
-      if (Grade.SelectedField.CampoTipoNumerico) then
-        NovoValor := FloatToStr(StrToFloatDef(Mens, 0))
-      else
-        NovoValor := Mens;
-
-      if (NovoValor = Campo.AsString) then
-        Exit;
-    end;
-
-    case Funcao of
-      2:
-        Mens := 'Confirma o arredondamento para 2 casas decimais?';
-      3:
-        Mens := 'Confirma o arredondamento para 1 casa decimal?';
-      4:
-        Mens := 'Confirma o arredondamento para a unidade?';
-      5:
-        Mens := 'Confirma o arredondamento para a dezena?';
-      6:
-        Mens := 'Confirma o ajuste para o próximo inteiro?';
-      7:
-        Mens := 'Confirma o ajuste para o inteiro anterior?';
-      8:
-        Mens := 'Confirma atribuir o valor "' + NovoValor + '"?';
-    end;
-
-    if (not TCaixasDeDialogo.Confirma(Mens)) then
-      Exit;
-
-    ProcessaRegistros;
-  end;
-end;
-
-procedure TDMConexao.FiltrarRegistros1Click(Sender: TObject);
-var
-  Grade: TDBGrid;
-  CDS: TClientDataSet;
-  NovoFiltro: String;
-begin
-  if not(Screen.ActiveControl is TDBGrid) then
-    Exit;
-
-  Grade := (Screen.ActiveControl as TDBGrid);
-
-  if (Assigned(Grade.DataSource)) and
-    (Assigned(Grade.DataSource.DataSet)) then
-    if (Grade.DataSource.DataSet is TClientDataSet) then
-    begin
-      CDS := (Grade.DataSource.DataSet as TClientDataSet);
-      NovoFiltro := CDS.Filter;
-
-      if TCaixasDeDialogo.Responda_2('Filtrar os Dados', 'Novo filtro:', NovoFiltro) then
-      begin
-        CDS.Filter := NovoFiltro;
-        CDS.Filtered := (Trim(NovoFiltro) <> '');
-      end;
-    end;
-end;
-
-procedure TDMConexao.MeuBotaoOkB_Click(Sender: TObject);
-var
-  i: Integer;
-begin
-  with FormMailExportDialog do
-  begin
-    for i := 0 to ComponentCount - 1 do
-      if Components[i] is TLabel then
-        (Components[i] as TLabel).Font.Style := [];
-    if AddressE.Text = '' then
-    begin
-      ExportSheet.Show;
-      AddressLB.Font.Style := [fsBold];
-      ModalREsult := mrNone;
-    end;
-    if SubjectE.Text = '' then
-    begin
-      ExportSheet.Show;
-      SubjectLB.Font.Style := [fsBold];
-      ModalREsult := mrNone;
-    end;
-    if FromAddrE.Text = '' then
-    begin
-      AccountSheet.Show;
-      FromAddrLB.Font.Style := [fsBold];
-      ModalREsult := mrNone;
-    end;
-
-    // nao validar o servidor: Caso necessite implementar o endereco de servidor do cliente, colocar isso de volta
-
-    { if HostE.Text = '' then
-      begin
-     AccountSheet.Show;
-     HostLB.Font.Style := [fsBold];
-     ModalREsult := mrNone;
-     end;
-     if PortE.Text = '' then
-     begin
-     AccountSheet.Show;
-     PortLB.Font.Style := [fsBold];
-     ModalREsult := mrNone;
-     end; }
-
-    ReqLB.Visible := ModalREsult = mrNone;
-  end;
-end;
-
-procedure TDMConexao.frxExportaMailBeginExport(Sender: TObject);
-const
-  EMAIL_EXPORT_SECTION = 'Tek_EmailExport';
-var
-  i: Integer;
-  INI: TCustomIniFile;
-  s, Section: string;
-  UseIniFile_Remetente, UseIniFile_EMail: boolean;
-  AddressCCl: TLabel;
-  AddressCCe: TComboBox;
-  ST: TStream;
-begin
-  frxExportaMail.FromName := SecaoAtual.Usuario.Nome;
-  frxExportaMail.FromMail := SecaoAtual.Usuario.EmailPadrao.EmailRemetente;
-  frxExportaMail.FromCompany := SecaoAtual.Empresa.Nome;
-  frxExportaMail.Address := DestinatarioPadraoEmailRelatorio;
-  frxExportaMail.Subject := AssuntoPadraoEmailRelatorio;
-  frxExportaMail.MailCC  := '';
-  frxExportaMail.Lines.Clear;
-  frxExportaMail.Signature.Clear;
-  frxExportaMail.SmtpHost := '';
-  frxExportaMail.SmtpPort := 25;
-  frxExportaMail.Login := '';
-  frxExportaMail.Password := '';
-
-  UseIniFile_Remetente := frxExportaMail.UseIniFile;
-  UseIniFile_EMail := frxExportaMail.UseIniFile;
-
-  with TFDlgSelecionaContaEmail.SelecionaEmail(Self) do
-  begin
-    if Codigo > 0 then
-    begin
-      frxExportaMail.FromName := NomeRemetente;
-      frxExportaMail.FromMail := EmailRemetente;
-
-      frxExportaMail.SmtpHost := SmtpHost;
-      frxExportaMail.SmtpPort := SmtpPort;
-      frxExportaMail.Login    := User;
-      frxExportaMail.Password := Password;
-      frxExportaMail.MailCC   := Copia;
-      frxExportaMail.Lines.Text := TextoPadrao;
-
-      Flag_EnviaEmail_ServidorEmail_EmailSeguro := SSL;
-      Flag_EnviaEmail_ServidorEmail_TLS         := TLS;
-      Flag_EnviaEmail_Metodo := MetodoEnvio;
-
-      UseIniFile_Remetente := False;
-    end
-    else
-    if SecaoAtual.Parametro.EmailGeral.Codigo > 0 then
-    begin
-      frxExportaMail.FromName := SecaoAtual.Parametro.EmailGeral.NomeRemetente;
-      frxExportaMail.FromMail := SecaoAtual.Parametro.EmailGeral.EmailRemetente;
-
-      frxExportaMail.SmtpHost := SecaoAtual.Parametro.EmailGeral.SmtpHost;
-      frxExportaMail.SmtpPort := SecaoAtual.Parametro.EmailGeral.SmtpPort;
-      frxExportaMail.Login    := SecaoAtual.Parametro.EmailGeral.User;
-      frxExportaMail.Password := SecaoAtual.Parametro.EmailGeral.Password;
-
-      Flag_EnviaEmail_ServidorEmail_EmailSeguro := SecaoAtual.Parametro.EmailGeral.SSL;
-      Flag_EnviaEmail_ServidorEmail_TLS         := SecaoAtual.Parametro.EmailGeral.TLS;
-
-      Flag_EnviaEmail_Metodo := SecaoAtual.Parametro.EmailGeral.MetodoEnvio;
-
-      UseIniFile_Remetente := False;
-    end;
-  end;
-
-  Section := EMAIL_EXPORT_SECTION + '.Properties';
-
-  FormMailExportDialog := TfrxMailExportDialog.Create(nil);
-  try
-    with FormMailExportDialog do
-    begin
-      MessageM.Height := MessageM.Height - AddressE.Height -3;
-
-      AddressCCe := TComboBox.Create(FormMailExportDialog);
-      AddressCCe.Parent := MessageGroup;
-      AddressCCe.Top := MessageM.Top + MessageM.Height + 3;
-      AddressCCe.Left := AddressE.Left;
-      AddressCCe.Height := AddressE.Height;
-      AddressCCe.Width := AddressE.Width;
-      AddressCCe.TabOrder := MessageM.TabOrder +1;
-
-      AddressCCl := TLabel.Create(FormMailExportDialog);
-      AddressCCl.Parent := MessageGroup;
-      AddressCCl.Top := AddressCCe.Top + 4;
-      AddressCCl.Left := AddressLB.Left;
-      AddressCCl.Height := AddressLB.Height;
-      AddressCCl.Width := AddressLB.Width;
-      AddressCCl.Caption := 'CC';
-
-      SendMessage(GetWindow(ExportsCombo.Handle, GW_CHILD), EM_SETREADONLY, 1, 0);
-      ExportsCombo.Items.Clear;
-      ExportsCombo.Style := csDropDownList;
-      for i := 0 to frxExportFilters.Count - 1 do
-      begin
-        if (TfrxCustomExportFilter(frxExportFilters[i].Filter).ClassName <> 'TfrxDotMatrixExport')
-          and (TfrxCustomExportFilter(frxExportFilters[i].Filter).ClassName <> 'TfrxMailExport') then
-        begin
-          s := TfrxCustomExportFilter(frxExportFilters[i].Filter).GetDescription;
-          if ExportsCombo.Items.IndexOf(s) < 0 then
-            ExportsCombo.Items.AddObject(s, TfrxCustomExportFilter(frxExportFilters[i].Filter));
-        end;
-      end;
-      ExportsCombo.Items.AddObject(frxResources.Get('FastReportFile'), nil);
-      SettingCB.Checked := DMConexao.frxExportaMail.ShowExportDialog;
-
-      if not DMConexao.frxExportaMail.UseIniFile then
-        RememberCB.Visible := false;
-
-      if DMConexao.frxExportaMail.UseIniFile then
-        INI := IniFiles.TIniFile.Create(ExtractFilePath(Application.ExeName) + ArquivoIniClient)
-      else
-        INI := TRegistryIniFile.Create('\Software\Tek System Informática Ltda.');
-      try
-        if UseIniFile_Remetente then
-        begin
-          FromNameE.Text := INI.ReadString(Section, 'FromName', frxExportaMail.FromName);
-          FromAddrE.Text := INI.ReadString(Section, 'FromAddress', frxExportaMail.FromMail);
-          OrgE.Text := INI.ReadString(Section, 'Organization', frxExportaMail.FromCompany);
-          ST := TMemoryStream.Create;
-          try
-            INI.ReadBinaryStream(Section, 'SignatureM', ST);
-            ST.Position := 0;
-            SignatureM.Lines.LoadFromStream(ST);
-          finally
-            FreeAndNil(ST);
-          end;
-          ReadingCB.Checked := INI.ReadString(Section, 'ConfurmReading', '') = 'S';
-          SettingCB.Checked := INI.ReadString(Section, 'ShowExportDialog', '') = 'S';
-
-          HostE.Text := INI.ReadString(Section, 'SmtpHost', '');
-          PortE.Text := INI.ReadString(Section, 'SmtpPort', '25');
-          LoginE.Text := string(Base64Decode(AnsiString(INI.ReadString(Section, 'Login', ''))));
-          PasswordE.Text := string(Base64Decode(AnsiString(INI.ReadString(Section, 'Password', ''))));
-          TimeoutE.Text := INI.ReadString(Section, 'Timeout', '60');
-        end else begin
-          FromNameE.Text := frxExportaMail.FromName;
-          FromAddrE.Text := frxExportaMail.FromMail;
-          OrgE.Text := frxExportaMail.FromCompany;
-          SignatureM.Lines.Text := frxExportaMail.Signature.Text;
-          ReadingCB.Checked := frxExportaMail.ConfurmReading;
-          SettingCB.Checked := frxExportaMail.ShowExportDialog;
-
-          // Dados do servidor, sem uso para envio pelo servidor de email da tek system
-          HostE.Text := frxExportaMail.SmtpHost;
-          PortE.Text := IntToStr(frxExportaMail.SmtpPort);
-          LoginE.Text := frxExportaMail.Login;
-          PasswordE.Text := frxExportaMail.Password;
-          TimeoutE.Text := IntToStr(frxExportaMail.Timeout);
-        end;
-
-        if UseIniFile_EMail then
-        begin
-          INI.ReadSection(EMAIL_EXPORT_SECTION + '.RecentAddresses', AddressE.Items);
-          INI.ReadSection(EMAIL_EXPORT_SECTION + '.RecentSubjects', SubjectE.Items);
-          INI.ReadSection(EMAIL_EXPORT_SECTION + '.RecentAddressCCs', AddressCCe.Items);
-          AddressCCe.ItemIndex := INI.ReadInteger(Section, 'LastUsedAddressCC', -1);
-          ExportsCombo.ItemIndex := INI.ReadInteger(Section, 'LastUsedExport', 0);
-        end else begin
-          if not Assigned(frxExportaMail.ExportFilter) then
-            ExportsCombo.ItemIndex := 0
-          else
-            ExportsCombo.ItemIndex := ExportsCombo.Items.IndexOfObject(frxExportaMail.ExportFilter);
-        end;
-      finally
-        FreeAndNil(INI);
-      end;
-
-      if DestinatarioPadraoEmailRelatorio <> '' then
-        frxExportaMail.Address := DestinatarioPadraoEmailRelatorio;
-      if AssuntoPadraoEmailRelatorio <> '' then
-        frxExportaMail.Subject := AssuntoPadraoEmailRelatorio;
-
-      AddressE.Text := frxExportaMail.Address;
-      SubjectE.Text := frxExportaMail.Subject;
-      MessageM.Text := frxExportaMail.Lines.Text;
-      if frxExportaMail.MailCC <> '' then
-        AddressCCe.Text := frxExportaMail.MailCC;
-
-      AccountGroup.Visible := false;
-      ReadingCB.Caption := 'Solicitar Confirmação de Leitura'; // A tradução do FastReport estava errada
-      ReadingCB.Width := 200;
-
-      // trocar ovento de click do botao
-      OkB.OnClick := MeuBotaoOkB_Click;
-
-      if ShowModal <> mrOK then
-        Abort;
-
-      if DMConexao.frxExportaMail.UseIniFile then
-        INI := IniFiles.TIniFile.Create(ExtractFilePath(Application.ExeName) + ArquivoIniClient)
-      else
-        INI := TRegistryIniFile.Create('\Software\Tek System Informática Ltda.');
-      try
-        frxExportaMail.Address := AddressE.Text;
-        frxExportaMail.FromName := FromNameE.Text;
-        frxExportaMail.FromMail := FromAddrE.Text;
-        frxExportaMail.MailCC := AddressCCe.Text;
-        frxExportaMail.FromCompany := OrgE.Text;
-        frxExportaMail.Signature.Assign(SignatureM.Lines);
-        frxExportaMail.SmtpHost := HostE.Text;
-        frxExportaMail.SmtpPort := StrToInt(PortE.Text);
-        frxExportaMail.Login := LoginE.Text;
-        frxExportaMail.Password := PasswordE.Text;
-        frxExportaMail.Subject := SubjectE.Text;
-        frxExportaMail.Lines.Text := MessageM.Lines.Text;
-        frxExportaMail.Timeout := StrToInt(TimeoutE.Text);
-        frxExportaMail.ConfurmReading := ReadingCB.Checked;
-        frxExportaMail.ShowExportDialog := SettingCB.Checked;
-
-        if Radio_Smtp.Checked then
-          frxExportaMail.UseMAPI := SMTP
-        else if Radio_MAPI.Checked then
-          frxExportaMail.UseMAPI := MAPI
-        else if Radio_Outlook.Checked then
-          frxExportaMail.UseMAPI := MSOutlook;
-
-        if RememberCB.Checked and UseIniFile_Remetente then
-        begin
-          INI.WriteString(Section, 'FromName', FromNameE.Text);
-          INI.WriteString(Section, 'FromAddress', FromAddrE.Text);
-          INI.WriteString(Section, 'Organization', OrgE.Text);
-
-          ST := TMemoryStream.Create;
-          try
-            SignatureM.Lines.SaveToStream(ST);
-            ST.Position := 0;
-            INI.WriteBinaryStream(Section, 'SignatureM', ST);
-          finally
-            FreeAndNil(ST);
-          end;
-
-          INI.WriteBool(Section, 'ConfurmReading', ReadingCB.Checked);
-          INI.WriteBool(Section, 'ShowExportDialog', SettingCB.Checked);
-
-          // ini.WriteString(Section, 'Signature', SignatureM.Lines.Text);
-          INI.WriteString(Section, 'SmtpHost', HostE.Text);
-          INI.WriteString(Section, 'SmtpPort', PortE.Text);
-          INI.WriteString(Section, 'Login', string(Base64Encode(AnsiString(LoginE.Text))));
-          INI.WriteString(Section, 'Password', string(Base64Encode(AnsiString(PasswordE.Text))));
-          INI.WriteString(Section, 'Timeout', string(TimeoutE.Text));
-        end;
-
-        if UseIniFile_EMail then
-        begin
-          INI.WriteString(EMAIL_EXPORT_SECTION + '.RecentAddresses', AddressE.Text, AddressE.Text);
-          INI.WriteString(EMAIL_EXPORT_SECTION + '.RecentSubjects', SubjectE.Text, SubjectE.Text);
-          INI.WriteString(EMAIL_EXPORT_SECTION + '.RecentAddressCCs', AddressCCe.Text, AddressCCe.Text);
-          INI.WriteInteger(Section, 'LastUsedAddressCC', AddressCCe.ItemIndex);
-          INI.WriteInteger(Section, 'LastUsedExport', ExportsCombo.ItemIndex);
-        end;
-      finally
-        FreeAndNil(INI);
-      end;
-
-      frxExportaMail.ShowExportDialog := SettingCB.Checked;
-      frxExportaMail.ExportFilter := TfrxCustomExportFilter(ExportsCombo.Items.Objects[ExportsCombo.ItemIndex]);
-
-      if Assigned(frxExportaMail.ExportFilter) then
-        frxExportaMail.ExportFilter.SlaveExport := True;
-    end;
-  finally
-    FreeAndNil(FormMailExportDialog);
-  end;
-  Flag_EnviandoRelatorioFastReport := True;
-end;
-
-function TDMConexao.frxExportaMailSendMail(const Server: string; const Port: Integer; const UserField, PasswordField: string;
-  FromField, ToField, SubjectField,
-  CompanyField, TextField: WideString;
-  FileNames: TStringList; Timeout: Integer; ConfurmReading: Boolean; MailCc, MailBcc: WideString): string;
-var
-  i, P: Integer;
-  s, NomeArquivo, Identificacao: string;
-  MSGSimples, MSGHtml: string;
-  EnviaEmail: TEnviarEmail;
-begin
-  TFAguarde.Ativar(Self.Name, 'Enviando e-mail');
-  try
-    Identificacao := '';
-    for i := 0 to FileNames.Count - 1 do
-    begin
-      NomeArquivo := ExtractFileName(FileNames[i]);
-      NomeArquivo := ChangeFileExt(NomeArquivo, '');
-
-      if Identificacao <> '' then // Concatenar a identificacao, geralmente irá um arquivo apenas
-        Identificacao := Identificacao + ', ';
-      Identificacao := NomeArquivo;
-    end;
-
-    if DMConexao.frxExportaMail.Lines.Count = 0 then
-    begin
-      MSGSimples :=
-        'E-mail/Relatório Exportado pelo Sistema da Tek-System ' + #13 +
-        SecaoAtual.Empresa.Nome + #13#13 +
-        'Informações sobre o Relatório: ' + #13 +
-        'Descrição: ' + Identificacao + #13 +
-        'Autor: ' + DMConexao.frxExportaMail.FromName + #13 +
-        'Empresa: ' + DMConexao.frxExportaMail.FromCompany + #13#13 +
-        DMConexao.frxExportaMail.Lines.Text + #13#13#13;
-
-      MSGHtml :=
-        '<html><body>' + #13 +
-        '<p align="center"><b> E-mail/Relatório Exportado pelo Sistema da Tek-System </b></p>' + #13 +
-        '<p align="center">' + SecaoAtual.Empresa.Nome + '</p>'#13 +
-        '<p align="center"><u>Informações sobre o Relatório:</u></p>' + #13 +
-        '<font face="Courier New"><UL>' +
-        '<LI> Descrição...: ' + Identificacao + '</LI>'#13 +
-        '<LI> Autor.......: ' + DMConexao.frxExportaMail.FromName + '</LI>'#13 +
-        '<LI> Empresa.....: ' + DMConexao.frxExportaMail.FromCompany + '</LI>'#13 +
-        '</UL></font><p>' + DMConexao.frxExportaMail.Lines.Text + '</p>'#13#13#13;
-
-      MSGHtml := MSGHtml + '<font face="Tahoma" size=2><UL>';
-      MSGHtml := MSGHtml + '<p align="left">';
-
-      for i := 0 to DMConexao.frxExportaMail.Signature.Count - 1 do
-      begin
-        MSGHtml := MSGHtml + '<br>' + DMConexao.frxExportaMail.Signature[i] + '</br>';
-        MSGSimples := MSGSimples + DMConexao.frxExportaMail.Signature[i];
-      end;
-
-      MSGHtml := MSGHtml + '</p>';
-      MSGHtml := MSGHtml + '</UL></font>';
-      MSGHtml := MSGHtml + '</body></html>';
-
-      TextField := MSGSimples;
-    end
-    else
-    begin
-      MSGSimples := DMConexao.frxExportaMail.Lines.Text;
-      MSGHtml := '';
-    end;
-
-    EnviaEmail := TEnviarEmail.Create(Self);
-    try
-      if (frxExportaMail.SmtpHost <> '') then
-      begin
-        EnviaEmail.ServidorEmail_Host := DMConexao.frxExportaMail.SmtpHost;
-        EnviaEmail.ServidorEmail_Port := DMConexao.frxExportaMail.SmtpPort;
-        EnviaEmail.ServidorEmail_Username := DMConexao.frxExportaMail.Login;
-        EnviaEmail.ServidorEmail_Password := DMConexao.frxExportaMail.Password;
-
-        EnviaEmail.ServidorEmail_EmailSeguro := Flag_EnviaEmail_ServidorEmail_EmailSeguro;
-        EnviaEmail.ServidorEmail_TLS := Flag_EnviaEmail_ServidorEmail_TLS;
-      end;
-
-      EnviaEmail.Remetente_Nome := DMConexao.frxExportaMail.FromName;
-      EnviaEmail.Remetente_Email := DMConexao.frxExportaMail.FromMail;
-
-      EnviaEmail.Assunto := DMConexao.frxExportaMail.Subject;
-      EnviaEmail.MensagemHTML := MSGHtml;
-      EnviaEmail.Mensagem := MSGSimples;
-
-      for i := 0 to FileNames.Count - 1 do
-      begin
-        s := FileNames[i];
-        P := Pos('=', s);
-        if P > 0 then
-          NomeArquivo := Trim(Copy(s, 1, P - 1))
-        else
-          NomeArquivo := s;
-        EnviaEmail.ArquivosAnexados.Add(NomeArquivo);
-      end;
-
-      EnviaEmail.Destinatario_Email := DMConexao.frxExportaMail.Address;
-      EnviaEmail.Destinatario_EmailCC := DMConexao.frxExportaMail.MailCc;
-      EnviaEmail.Destinatario_EmailCCO := DMConexao.frxExportaMail.MailBcc;
-
-      if SecaoAtual.Parametro.ContaCopiaEmail <> '' then
-        EnviaEmail.Destinatario_EmailCCO := IfThen(EnviaEmail.Destinatario_EmailCCO <> '', EnviaEmail.Destinatario_EmailCCO + ';', '') + SecaoAtual.Parametro.ContaCopiaEmail;
-
-      if DMConexao.SecaoAtual.Parametro.ContaCopiaEmailProc <> '' then
-        EnviaEmail.Destinatario_EmailCCO := IfThen(EnviaEmail.Destinatario_EmailCCO <> '', EnviaEmail.Destinatario_EmailCCO + ';', '') + SecaoAtual.Parametro.ContaCopiaEmailProc;
-
-      if SecaoAtual.Usuario.EmailPadrao.Copia <> '' then
-        EnviaEmail.Destinatario_EmailCCO := IfThen(EnviaEmail.Destinatario_EmailCCO <> '', EnviaEmail.Destinatario_EmailCCO + ';', '') + SecaoAtual.Usuario.EmailPadrao.Copia;
-
-      EnviaEmail.UsaRemetenteEmailNoFrom := True;
-      EnviaEmail.SolicitarConfirmacaoDeLeitura := DMConexao.frxExportaMail.ConfurmReading;
-
-      case frxExportaMail.UseMAPI of
-        TMailTransport.SMTP:
-          EnviaEmail.FormaEnvio := ClassEnviarEmail.TFormaEnvioEmail(Flag_EnviaEmail_Metodo);
-        TMailTransport.MAPI:
-          EnviaEmail.FormaEnvio := ClassEnviarEmail.envioEmailMapi;
-        TMailTransport.MSOutlook:
-          EnviaEmail.FormaEnvio := EnviaEmail.getDefaultMailer;
-      end;
-
-      EnviaEmail.Enviar;
-    finally
-      FreeAndNil(EnviaEmail);
-
-      Flag_EnviandoRelatorioFastReport := false;
-      DestinatarioPadraoEmailRelatorio := '';
-      AssuntoPadraoEmailRelatorio := '';
-    end;
-  finally
-    TFAguarde.Desativar(Self.Name);
-  end;
-
-  Result := '';
-end;
-
 procedure TDMConexao.CarregarListaDeTabelasEProceduresDoBDD;
 begin
-  SynSQLSynPadrao.FunctionNames.Text := ExecuteMethods('TSMConexao.GetProcedureNames', []);
-  SynSQLSynPadrao.TableNames.Text    := ExecuteMethods('TSMConexao.GetTableNames',     [False]);
-  SynSQLSynPadrao.TableNames.Add(ExecuteMethods('TSMConexao.GetTableNames', [True]));
+  SynSQLSynPadrao.FunctionNames.Text := ExecutaMetodo('TSMConexao.GetProcedureNames', []);
+  SynSQLSynPadrao.TableNames.Text    := ExecutaMetodo('TSMConexao.GetTableNames',     [False]);
+  SynSQLSynPadrao.TableNames.Add(ExecutaMetodo('TSMConexao.GetTableNames', [True]));
 end;
-
-procedure TDMConexao.CarregarUnitsProtegidas;
-begin
-  if (CDSUnitsProtegidas.Active) then
-    Exit;
-
-  CDSUnitsProtegidas.Data := ExecuteMethods('TSMConexao.UnitsProtegidas', []);
-  with CDSUnitsProtegidas do
-    begin
-      LogChanges := False;
-      First;
-      while (not Eof) do
-        begin
-          Edit;
-          FieldByName('CODIFICACAO').AsString := TrimRight(TFuncoesCriptografia.Decodifica(FieldByName('CODIFICACAO').AsString, sChaveCriptografia));
-          Post;
-
-          Next;
-        end;
-
-      IndexFieldNames := 'NOME';
-    end;
-end;
-
-procedure TDMConexao.CarregarProcessamentosProtegidos;
-begin
-  if (CDSProcessamentosProtegidos.Active) then
-    Exit;
-
-  CDSProcessamentosProtegidos.Data := ExecuteMethods('TSMConexao.ProcessamentosProtegidos', []);
-  with CDSProcessamentosProtegidos do
-    begin
-      LogChanges := False;
-      First;
-      while (not Eof) do
-        begin
-          Edit;
-          FieldByName('CODIFICACAO').AsString := TrimRight(TFuncoesCriptografia.Decodifica(FieldByName('CODIFICACAO').AsString, sChaveCriptografia));
-          Post;
-
-          Next;
-        end;
-
-      IndexFieldNames := 'CODIGOTEKSYSTEM';
-    end;
-end;
-
-{$ENDREGION}
 
 {$REGION 'Carga de Cache'}
 procedure TDMConexao.CarregaDefaults;
 begin
-  CDSDefaults.Data := ExecuteMethods('TSMConexao.CarregaDefaults', ['']);
+  CDSDefaults.Data := ExecutaMetodo('TSMConexao.CarregaDefaults', ['']);
   CDSDefaults.IndexFieldNames := 'TABELA';
 end;
 
@@ -2175,7 +449,7 @@ end;
 
 procedure TDMConexao.CarregaMensagem;
 begin
-  StatusDeMensagens := ExecuteMethods('TSMMensagem.MensagemNaoLida', []);
+  StatusDeMensagens := ExecutaMetodo('TSMMensagem.MensagemNaoLida', []);
 end;
 
 procedure TDMConexao.CarregaSecaoAtual;
@@ -2234,7 +508,7 @@ begin
     FPrincipal.ConfigurarAmbienteSistema;
 
 {$IF DEFINED(QUALIDADE)}
-  DMConexao.ExecuteMethods('TSMConexao.AtualizarContadorSAC', [DMConexao.SecaoAtual.Usuario.Codigo]);
+  DMConexao.ExecutaMetodo('TSMConexao.AtualizarContadorSAC', [DMConexao.SecaoAtual.Usuario.Codigo]);
 {$IFEND}
 
 {$Region 'Extração Schemas NFS-e - Provedor pode variar de acordo com município da empresa'}
@@ -2305,7 +579,7 @@ procedure TDMConexao.AtualizarDeptoPessoal(MostrarMensagem: Boolean);
 var
   Parametros: OleVariant;
 begin
-  ExecuteMethods_ComCallBack('TSMDepPessoal.EP_InicializarTabelas', [Parametros]);
+  ExecutaMetodo_ComCallBack('TSMDepPessoal.EP_InicializarTabelas', [Parametros]);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao(sSucessoEmProcesso);
@@ -2315,7 +589,7 @@ procedure TDMConexao.AtualizarESocial(MostrarMensagem: Boolean);
 var
   Parametros: OleVariant;
 begin
-  ExecuteMethods_ComCallBack('TSMDepPessoal.EP_InicializarTabelasESocial', [Parametros]);
+  ExecutaMetodo_ComCallBack('TSMDepPessoal.EP_InicializarTabelasESocial', [Parametros]);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao(sSucessoEmProcesso);
@@ -2323,7 +597,7 @@ end;
 
 procedure TDMConexao.AtualizarImportaExportaTitulos(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadConfigExportacaoTitulos.AtualizarConfiguracoesImportaExportaTekSystem', []);
+  ExecutaMetodo_ComCallBack('TSMCadConfigExportacaoTitulos.AtualizarConfiguracoesImportaExportaTekSystem', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Configurações de Importação/Exportação de Títulos atualizados com Sucesso!');
@@ -2333,7 +607,7 @@ procedure TDMConexao.AtualizarLivroFiscal(MostrarMensagem: Boolean);
 var
   Parametros: OleVariant;
 begin
-  ExecuteMethods_ComCallBack('TSMLivroFiscal.ExecProcedimento', [LF_Constantes.LF_Proc_InicializarTabelas, Parametros]);
+  ExecutaMetodo_ComCallBack('TSMLivroFiscal.ExecProcedimento', [LF_Constantes.LF_Proc_InicializarTabelas, Parametros]);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao(sSucessoEmProcesso);
@@ -2341,7 +615,7 @@ end;
 
 procedure TDMConexao.AtualizarModelosDataWarehouse(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadDW_Temas.AtualizarModelosDataWarehouse', []);
+  ExecutaMetodo_ComCallBack('TSMCadDW_Temas.AtualizarModelosDataWarehouse', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Temas de Armazéns de Dados (Data Warehouse) Atualizados com Sucesso!');
@@ -2349,7 +623,7 @@ end;
 
 procedure TDMConexao.AtualizarModelosRelatoriosEspecificos(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadGR_Relatorio.AtualizarModelosRelatorios', []);
+  ExecutaMetodo_ComCallBack('TSMCadGR_Relatorio.AtualizarModelosRelatorios', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Relatórios Específicos (Gerador) atualizados com Sucesso!');
@@ -2357,7 +631,7 @@ end;
 
 procedure TDMConexao.AtualizarModelosUnidadesCodificacao(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadGR_Unidades_Codificacao.AtualizarModelosUnidadesCodificacao', []);
+  ExecutaMetodo_ComCallBack('TSMCadGR_Unidades_Codificacao.AtualizarModelosUnidadesCodificacao', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Modelos de Unidades de Codificação Atualizados com Sucesso!');
@@ -2365,7 +639,7 @@ end;
 
 procedure TDMConexao.AtualizarModelosProcessamentos(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadTI_Processamentos.AtualizarModelosProcessamentosTekSystem', []);
+  ExecutaMetodo_ComCallBack('TSMCadTI_Processamentos.AtualizarModelosProcessamentosTekSystem', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Processamentos Específicos foram atualizados com sucesso!');
@@ -2373,7 +647,7 @@ end;
 
 procedure TDMConexao.AtualizarModelosIndicadores(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadGR_Indicadores.AtualizarIndicadoresTekSystem', []);
+  ExecutaMetodo_ComCallBack('TSMCadGR_Indicadores.AtualizarIndicadoresTekSystem', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Modelos de Indicadores Atualizados com Sucesso!');
@@ -2381,7 +655,7 @@ end;
 
 procedure TDMConexao.AtualizarConfigRemessaRetornoBanc(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMCadConfigRemessaRetorno.AtualizarConfiguracoesRemessaRetornoBancTekSystem', []);
+  ExecutaMetodo_ComCallBack('TSMCadConfigRemessaRetorno.AtualizarConfiguracoesRemessaRetornoBancTekSystem', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Configurações de Remessa/Retorno Bancários Atualizados com Sucesso!');
@@ -2389,14 +663,14 @@ end;
 
 procedure TDMConexao.AtualizarContabilidade(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMContabilidade.InicializarDadosContabilidade', []);
+  ExecutaMetodo_ComCallBack('TSMContabilidade.InicializarDadosContabilidade', []);
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Tabelas do Módulo Contabilidade Atualizados com Sucesso!');
 end;
 
 procedure TDMConexao.AtualizarModelosRelatorios(MostrarMensagem: Boolean);
 begin
-  ExecuteMethods_ComCallBack('TSMRelatorio.AtualizaRelatorios', []);
+  ExecutaMetodo_ComCallBack('TSMRelatorio.AtualizaRelatorios', []);
 
   if MostrarMensagem then
     TCaixasDeDialogo.Informacao('Modelos de relatórios atualizados com sucesso!');
@@ -2456,7 +730,7 @@ begin
   // Executa a função Proximo do Servidor de Aplicação, que tem o objetivo de
   // retornar o próximo código para a tabela em questão
   Tabela := AnsiUpperCase(Tabela);
-  Result := ExecuteMethods('TSMConexao.ProximoCodigo', [Tabela, Quebra]);
+  Result := ExecutaMetodo('TSMConexao.ProximoCodigo', [Tabela, Quebra]);
 end;
 
 function TDMConexao.ProximoCodigoAcrescimo(Tabela: string; Quebra, Acrescimo: Integer): int64;
@@ -2464,7 +738,7 @@ begin
   // Executa a função Proximo do Servidor de Aplicação, que tem o objetivo de
   // retornar o próximo código para a tabela em questão, com incremento de acordo com o terceiro parametro
   Tabela := AnsiUpperCase(Tabela);
-  Result := ExecuteMethods('TSMConexao.ProximoCodigoAcrescimo', [Tabela, Quebra, Acrescimo]);
+  Result := ExecutaMetodo('TSMConexao.ProximoCodigoAcrescimo', [Tabela, Quebra, Acrescimo]);
 end;
 
 function TDMConexao.DataHora: TDateTime;
@@ -2480,7 +754,7 @@ begin
   // ATENÇÃO: Só é chamada uma vez no sistema, para evitar fluxo ao Servidor de Aplicação.
   // Use a variável cDataHoraServidor que é sempre atualizada
   if (ForcaHoraServidor) or (cDataHoraServidor = 0) then
-    Result := ExecuteMethods('TSMConexao.DataHora', [])
+    Result := ExecutaMetodo('TSMConexao.DataHora', [])
   else
     Result := cDataHoraServidor;
 end;
@@ -2489,7 +763,7 @@ procedure TDMConexao.RegistraAcao(Descricao: string; Inicio, Fim: TDateTime; Obs
 begin
   // Executa a função RegistraAcao do Servidor de Aplicação, que tem o objetivo de
   // Registrar ações monitoradas/perigosas executadas pelo usuário
-  ExecuteMethods('TSMConexao.RegistraAcao', [Descricao, Inicio, Fim, Observacao]);
+  ExecutaMetodo('TSMConexao.RegistraAcao', [Descricao, Inicio, Fim, Observacao]);
 end;
 
 {$ENDREGION}
@@ -3711,8 +1985,8 @@ begin
     CDSTemp := TClientDataSet.Create(Self);
     try
       // 1 - Ler a mensagem de fechamento
-      CDSTemp.Data := ExecuteMethods('TSMMensagem.BuscaCabecalhosMensagens', [1, cStatusDeMensagens_FechaSistema, 'S']);
-      CDSTemp.Data := ExecuteMethods('TSMMensagem.BuscaDetalhesMensagem', [CDSTemp.FieldByName('AUTOINC_MENSAGEM').AsString]);
+      CDSTemp.Data := ExecutaMetodo('TSMMensagem.BuscaCabecalhosMensagens', [1, cStatusDeMensagens_FechaSistema, 'S']);
+      CDSTemp.Data := ExecutaMetodo('TSMMensagem.BuscaDetalhesMensagem', [CDSTemp.FieldByName('AUTOINC_MENSAGEM').AsString]);
       with CDSTemp do
       begin
         AutoInc := FieldByName('AUTOINC_MENSAGEM').AsString;
@@ -3730,7 +2004,7 @@ begin
     end;
 
     // 2 - Marcar como lida
-    ExecuteMethods('TSMMensagem.MarcaMensagemComoLida', [AutoInc]);
+    ExecutaMetodo('TSMMensagem.MarcaMensagemComoLida', [AutoInc]);
   end
   else
   begin

@@ -2,10 +2,6 @@ inherited DMPaiCadastro: TDMPaiCadastro
   OldCreateOrder = True
   OnCreate = DataModuleCreate
   Width = 225
-  inherited ConexaoDS: TSQLConnection
-    Left = 140
-    Top = 5
-  end
   object CDSCadastro: TClientDataSet
     Aggregates = <>
     Params = <>

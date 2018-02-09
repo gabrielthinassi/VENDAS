@@ -19,6 +19,18 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
     DoubleBuffered = False
     ParentDoubleBuffered = False
     TabOrder = 0
+    ExplicitTop = 312
+    object txtAjuda: TDBText
+      Left = 1
+      Top = 1
+      Width = 498
+      Height = 39
+      Align = alClient
+      ExplicitLeft = 61
+      ExplicitTop = 6
+      ExplicitWidth = 65
+      ExplicitHeight = 17
+    end
   end
   object pnlTop: TPanel
     Left = 0
@@ -48,6 +60,56 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
       TabOrder = 0
       DecimalPlacesAlwaysShown = False
     end
+    object pnlNavegar: TPanel
+      Left = 315
+      Top = 1
+      Width = 184
+      Height = 39
+      Align = alRight
+      BevelEdges = []
+      BevelInner = bvLowered
+      BevelKind = bkFlat
+      BevelOuter = bvNone
+      DoubleBuffered = False
+      ParentDoubleBuffered = False
+      TabOrder = 1
+      object btnUltimo: TSpeedButton
+        Left = 138
+        Top = 1
+        Width = 45
+        Height = 37
+        Align = alRight
+        Caption = '>|'
+        ExplicitHeight = 32
+      end
+      object btnProximo: TSpeedButton
+        Left = 93
+        Top = 1
+        Width = 45
+        Height = 37
+        Align = alRight
+        Caption = '>'
+        ExplicitHeight = 32
+      end
+      object btnAnterior: TSpeedButton
+        Left = 48
+        Top = 1
+        Width = 45
+        Height = 37
+        Align = alRight
+        Caption = '<'
+        ExplicitTop = -3
+      end
+      object btnPrimeiro: TSpeedButton
+        Left = 3
+        Top = 1
+        Width = 45
+        Height = 37
+        Align = alRight
+        Caption = '|<'
+        ExplicitHeight = 32
+      end
+    end
   end
   object pnlButtons: TPanel
     Left = 0
@@ -62,6 +124,55 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
     DoubleBuffered = False
     ParentDoubleBuffered = False
     TabOrder = 2
+    object btnRelatorio: TSpeedButton
+      Left = 1
+      Top = 221
+      Width = 124
+      Height = 44
+      Align = alTop
+      Caption = '&Relat'#243'rio'
+    end
+    object btnIncluir: TSpeedButton
+      Left = 1
+      Top = 1
+      Width = 124
+      Height = 44
+      Align = alTop
+      Caption = '&Incluir'
+      ExplicitTop = 2
+    end
+    object btnExcluir: TSpeedButton
+      Left = 1
+      Top = 45
+      Width = 124
+      Height = 44
+      Align = alTop
+      Caption = '&Excluir'
+    end
+    object btnGravar: TSpeedButton
+      Left = 1
+      Top = 89
+      Width = 124
+      Height = 44
+      Align = alTop
+      Caption = '&Gravar'
+    end
+    object btnCancelar: TSpeedButton
+      Left = 1
+      Top = 133
+      Width = 124
+      Height = 44
+      Align = alTop
+      Caption = '&Cancelar'
+    end
+    object btnPesquisar: TSpeedButton
+      Left = 1
+      Top = 177
+      Width = 124
+      Height = 44
+      Align = alTop
+      Caption = '&Pesquisar'
+    end
   end
   object tbctrlCadastro: TTabControl
     Left = 126
@@ -73,5 +184,9 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
     Tabs.Strings = (
       'Edit')
     TabIndex = 0
+  end
+  object DSCadastro: TDataSource
+    Left = 150
+    Top = 75
   end
 end

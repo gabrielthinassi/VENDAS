@@ -8,7 +8,6 @@ uses
 
 type
   TDMPai = class(TDataModule)
-    ConexaoDS: TSQLConnection;
     procedure DataModuleDestroy(Sender: TObject);
   private
     { Private declarations }
