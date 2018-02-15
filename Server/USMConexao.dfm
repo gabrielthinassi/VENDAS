@@ -18,7 +18,7 @@ object SMConexao: TSMConexao
       end>
     ProviderName = 'DSPProximoCodigo'
     Left = 62
-    Top = 102
+    Top = 107
   end
   object DSPProximoCodigo: TDataSetProvider
     DataSet = SQLDSProximoCodigo
@@ -26,31 +26,19 @@ object SMConexao: TSMConexao
     Exported = False
     Options = []
     Left = 63
-    Top = 58
+    Top = 63
   end
   object SQLDSProximoCodigo: TSQLDataSet
-    SchemaName = 'sysdba'
     CommandText = 
-      'select '#13#10'AUTOINCREMENTOS.TABELA_AUTOINC,'#13#10'AUTOINCREMENTOS.QUEBRA' +
-      '_AUTOINC,'#13#10'AUTOINCREMENTOS.CODIGO_AUTOINC'#13#10'from AUTOINCREMENTOS'#13 +
-      #10'where AUTOINCREMENTOS.TABELA_AUTOINC = :TABELA'#13#10'and AUTOINCREME' +
-      'NTOS.QUEBRA_AUTOINC = :QUEBRA'
+      'select '#13#10'AUTOINCREMENTOS.TABELA_AUTOINC,'#13#10'AUTOINCREMENTOS.CODIGO' +
+      '_AUTOINC'#13#10'from AUTOINCREMENTOS'#13#10'where AUTOINCREMENTOS.TABELA_AUT' +
+      'OINC = :TABELA'
     MaxBlobSize = -1
-    Params = <
-      item
-        DataType = ftString
-        Name = 'TABELA'
-        ParamType = ptInput
-      end
-      item
-        DataType = ftInteger
-        Name = 'QUEBRA'
-        ParamType = ptInput
-      end>
+    Params = <>
     Left = 62
     Top = 13
   end
-  object Conexao: TSQLConnection
+  object ConexaoBD: TSQLConnection
     DriverName = 'Firebird'
     LoginPrompt = False
     Params.Strings = (

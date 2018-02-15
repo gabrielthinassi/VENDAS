@@ -18,8 +18,6 @@ object DMConexao: TDMConexao
         '.Data.DbxClientDriver,Version=16.0.0.0,Culture=neutral,PublicKey' +
         'Token=91d62ebb5b0d1b1b'
       'Filters={}')
-    AfterConnect = ConexaoDSAfterConnect
-    AfterDisconnect = ConexaoDSAfterDisconnect
     Left = 50
     Top = 65
   end
@@ -28,12 +26,6 @@ object DMConexao: TDMConexao
     Params = <>
     Left = 348
     Top = 62
-  end
-  object DSPCCadAtalho: TDSProviderConnection
-    ServerClassName = 'TSMCadAtalhos'
-    SQLConnection = ConexaoDS
-    Left = 49
-    Top = 121
   end
   object CDSConfigClasses: TClientDataSet
     Aggregates = <>

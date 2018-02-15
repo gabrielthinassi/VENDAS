@@ -14,19 +14,16 @@ type
     CDSProximoCodigo: TClientDataSet;
     DSPProximoCodigo: TDataSetProvider;
     SQLDSProximoCodigo: TSQLDataSet;
-    Conexao: TSQLConnection;
+    ConexaoBD: TSQLConnection;
     procedure DSServerModuleDestroy(Sender: TObject);
   private
   public
-
     function ExecuteScalar(SQL: string; CriarTransacao: Boolean): OleVariant; virtual;
     function ExecuteReader(SQL: string; TamanhoPacote: Integer; CriarTransacao: Boolean): OleVariant; virtual;
     function ExecuteCommand(SQL: string; CriarTransacao: Boolean): OleVariant; virtual;
     function ExecuteCommand_Update(SQL, Campo: string; Valor: OleVariant; CriarTransacao: Boolean): OleVariant; virtual;
-    function ProximoCodigo(Tabela: String; Acrescimo: Integer): Int64; virtual;
+    function ProximoCodigo(Tabela: String): Int64; virtual;
     procedure AcertaProximoCodigo(NomeDaClasse: String; Quebra: Integer; CriarTransacao: Boolean = True); virtual;
-
-    property FConexao: TSQLConnection read Conexao;
   end;
 
 var
@@ -41,12 +38,12 @@ uses Constantes, ClassPaiCadastro;
 
 procedure TSMConexao.DSServerModuleDestroy(Sender: TObject);
 begin
-  if Assigned(Conexao) then
+  if Assigned(ConexaoBD) then
   begin
-    if (Conexao.Connected) then
+    if (ConexaoBD.Connected) then
       try
-        Conexao.Connected := False;
-        Conexao := nil;
+        ConexaoBD.Connected := False;
+        ConexaoBD := nil;
       except
         // Implementar
       end;
@@ -54,180 +51,95 @@ begin
   inherited;
 end;
 
-function TSMConexao.ExecuteScalar(SQL: string; CriarTransacao: Boolean): OleVariant;
+function TSMConexao.ExecuteScalar(SQL: string): OleVariant;
 var
-  DataSet     : TSQLDataSet;
-  TipoDeCampo : TFieldType;
-  Transacao   : TDBXTransaction;
+  DataSet   : TSQLDataSet;
+  TipoCampo : TFieldType;
 begin
-{  try
-    if CriarTransacao then
-      Transacao := Conexao.BeginTransaction(TDBXIsolations.ReadCommitted)
-    else if (not Conexao.InTransaction) then
-      raise Exception.Create('Precisa ter uma Transação Ativa!');
-
+  try
     try
-      Conexao.Execute(SQL, nil, TDataSet(DataSet));
+      ConexaoBD.Execute(SQL, nil, TDataSet(DataSet));
+      DataSet.ParamCheck := False; //Deixa um pouco mais rápido por não checar os Params.
 
-      DataSet.ParamCheck := False;
-
-      TipoDeCampo := DataSet.Fields[0].DataType;
+      TipoCampo := DataSet.Fields[0].DataType;
 
       if (DataSet <> nil) and (not DataSet.eof) then
-        case TipoDeCampo of
-          ftSmallint, ftInteger, ftWord:
-            Result := DataSet.Fields[0].AsInteger;
-          ftFloat, ftFMTBcd, ftLargeint, ftAutoInc, ftBCD:
-            Result := DataSet.Fields[0].AsFloat;
-          ftCurrency:
-            Result := DataSet.Fields[0].AsCurrency;
-          ftString, ftFixedChar, ftWideString, ftFixedWideChar, ftMemo, ftWideMemo, ftFmtMemo:
-            Result := DataSet.Fields[0].AsString;
-          ftDate, ftTime, ftDateTime, ftTimeStamp, ftOraTimeStamp:
-            Result := DataSet.Fields[0].AsDateTime;
-          ftBlob:
-            begin
-              Result := TBlobField(DataSet.Fields[0]).Value; // Value nesse caso Devolve string
-              // Campos BLOB binário poderiam retornar assim, mas não consegui distingui-los dos BLOB textos.
-              // Então preferi deixar a função retornando como Texto.
-              // Para retornar BLOB binário, usar a função ExecuteReader.
-              // MS := TMemoryStream.Create;
-              //  try
-              //  TBlobField(DataSet.Fields[0]).SaveToStream(MS);
-              //  MS.Position := 0;
-              //  Result := StreamToOleVariantBytes(MS);
-              //  finally
-              //  MS.Free;
-              //  end; 
-            end
-        else
-          Result := DataSet.Fields[0].Value;
-        end
+      case TipoCampo of
+        ftSmallint, ftInteger:
+          Result := DataSet.Fields[0].AsInteger;
+        ftFloat, ftCurrency:
+          Result := DataSet.Fields[0].AsCurrency;
+        ftString, ftWideString:
+          Result := DataSet.Fields[0].AsString;
+        ftDate, ftTime, ftDateTime, ftTimeStamp:
+          Result := DataSet.Fields[0].AsDateTime;
       else
-        case TipoDeCampo of
-          ftSmallint, ftInteger, ftWord, ftFloat, ftCurrency, ftBCD, ftFMTBcd, ftLargeint, ftAutoInc:
-            Result := 0;
-          ftString, ftFixedChar, ftWideString, ftFixedWideChar, ftMemo, ftWideMemo, ftFmtMemo:
-            Result := '';
-          ftDate, ftTime, ftDateTime, ftTimeStamp, ftOraTimeStamp:
-            Result := 0;
-          ftUnknown, ftVariant:
-            Result := Null;
-          ftBlob:
-            Result := '';
-        end;
-      // Tipos de Campos não tratados:
-      //  ftBoolean, ftBytes, ftVarBytes, ftMemo, ftGraphic, ,
-      //  ftParadoxOle, ftDBaseOle, ftTypedBinary, ftCursor, ftADT, ftArray,
-      //  ftReference, ftDataSet, ftOraBlob, ftOraClob, ftInterface, ftIDispatch, ftGuid, ftOraInterval 
+          Result := DataSet.Fields[0].Value;
+      end
+      else
+        Result := NULL;
+
     finally
       FreeAndNil(DataSet);
-      if CriarTransacao then
-        Conexao.CommitFreeAndNil(Transacao);
     end;
-  except
-    on E: Exception do
-    begin
-      if (Pos('Unable to complete network request to host', E.Message) > 0) or
-        (Pos('Error writing data to the connection', E.Message) > 0) or
-        (Pos('connection shutdown', E.Message) > 0) then
-        Conexao.Connected := False;
 
-      raise Exception.Create(FuncoesGeraisServidor.FormataErroNoServidor(Self.ClassName, 'ExecuteScalar', 'Comando SQL: ' + SQL + #13 + E.Message));
+  except on E: Exception do
+    begin
+      ConexaoBD.Connected := False;
+      raise Exception.Create('Erro na Execução: ' + #13 + E.Message);
     end;
   end;
-
-  InformaAtividadeSecao;
-}
 end;
 
-function TSMConexao.ExecuteReader(SQL: string; TamanhoPacote: Integer; CriarTransacao: Boolean): OleVariant;
+function TSMConexao.ExecuteReader(SQL: string): OleVariant;
 var
-  TransacaoLocal: TDBXTransaction;
-  DataSet   : TSQLDataSet;
-  DSP           : TDataSetProvider;
+  DataSet  : TSQLDataSet;
+  Provider : TDataSetProvider;
 begin
-{  try
-    if CriarTransacao then
-      TransacaoLocal := Conexao.BeginTransaction(TDBXIsolations.ReadCommitted)
-    else if (not Conexao.InTransaction) then
-      raise Exception.Create('Toda execução da função ExecuteReader deve estar dentro de um contexto transacional');
-
-    DSP         := TDataSetProvider.Create(nil);
-    DataSet := TSQLDataSet.Create(nil);
+  try
+    DataSet  := TSQLDataSet.Create(nil);
+    Provider := TDataSetProvider.Create(nil);
     try
-      with DataSet do
-      begin
-        SQLConnection := Conexao;
-        ParamCheck    := False;
-        CommandText   := SQL;
-        GetMetadata   := False;
-      end;
-      with DSP do
-      begin
-        Exported    := False;
-        Constraints := False;
-        DataSet     := DataSet;
-        Result      := DSP.Data;
-      end;
+      DataSet.SQLConnection := ConexaoBD;
+      DataSet.ParamCheck    := False; //Deixa um pouco mais rápido por não checar os Params.
+      DataSet.CommandText   := SQL;
+      DataSet.GetMetadata   := False; //Deixa um pouco mais rápido por não carregar o MetaData.
+
+      Provider.Exported    := False; //Deixa um pouco mais rápido, desabilitando a chamada deste Provider em ClientApp.
+      Provider.Constraints := False; //Deixa um pouco mais rápido, não enviando as Constraints.
+      Provider.DataSet     := DataSet;
+
+      Result      := Provider.Data;
+
     finally
-      FreeAndNil(DSP);
       FreeAndNil(DataSet);
-      if CriarTransacao then
-        Conexao.CommitFreeAndNil(TransacaoLocal);
+      FreeAndNil(Provider);
     end;
-  except
-    on E: Exception do
+  except on E: Exception do
     begin
-      if (Pos('Unable to complete network request to host', E.Message) > 0) or
-        (Pos('Error writing data to the connection', E.Message) > 0) or
-        (Pos('connection shutdown', E.Message) > 0) then
-        Conexao.Connected := False;
-
-      raise Exception.Create(FuncoesGeraisServidor.FormataErroNoServidor(Self.ClassName, 'ExecuteReader', 'Comando SQL: ' + SQL + #13 + E.Message));
+      ConexaoBD.Connected := False;
+      raise Exception.Create('Erro na Execução: ' + #13 + E.Message);
     end;
   end;
-}end;
+end;
 
-function TSMConexao.ExecuteCommand(SQL: string; CriarTransacao: Boolean): OleVariant;
-var
-  TransacaoLocal: TDBXTransaction;
+function TSMConexao.ExecuteCommand(SQL: string): OleVariant;
 begin
-{  try
-    if CriarTransacao then
-      TransacaoLocal := Conexao.BeginTransaction(TDBXIsolations.ReadCommitted)
-    else if (not Conexao.InTransaction) then
-      raise Exception.Create('Toda execução da função ExecuteCommand deve estar dentro de um contexto transacional');
-
-    with Conexao.DBXConnection.CreateCommand do
-      try
-        Text := SQL;
-        // Prepare;
-        ExecuteQuery;
-        Result := IntToStr(RowsAffected);
-      finally
-        Free;
-      end;
-
-    if CriarTransacao and (Conexao.HasTransaction(TransacaoLocal)) then
-      Conexao.CommitFreeAndNil(TransacaoLocal);
-  except
-    on E: Exception do
+  try
+    try
+      ConexaoBD.DBXConnection.CreateCommand.Text := SQL;
+      ConexaoBD.DBXConnection.CreateCommand.ExecuteQuery;
+      Result := IntToStr(ConexaoBD.DBXConnection.CreateCommand.RowsAffected);
+    finally
+      ConexaoBD.DBXConnection.CreateCommand.Free;
+    end;
+  except on E: Exception do
     begin
-      if (Pos('Unable to complete network request to host', E.Message) > 0) or
-        (Pos('Error writing data to the connection', E.Message) > 0) or
-        (Pos('connection shutdown', E.Message) > 0) then
-        Conexao.Connected := False
-      else if CriarTransacao then
-        if (Conexao.HasTransaction(TransacaoLocal)) then
-          Conexao.RollbackFreeAndNil(TransacaoLocal)
-        else
-          Conexao.RollbackIncompleteFreeAndNil(TransacaoLocal);
-
-      raise Exception.Create(FuncoesGeraisServidor.FormataErroNoServidor(Self.ClassName, 'ExecuteCommand', 'Comando SQL: ' + SQL + #13 + E.Message));
+      ConexaoBD.Connected := False;
+      raise Exception.Create('Erro na Execução: ' + #13 + E.Message);
     end;
   end;
-}end;
+end;
 
 function TSMConexao.ExecuteCommand_Update(SQL, Campo: string; Valor: OleVariant; CriarTransacao: Boolean): OleVariant;
 var
@@ -298,7 +210,9 @@ begin
 }end;
 
 
-function TSMConexao.ProximoCodigo(Tabela: String; Acrescimo: Integer): Int64;
+function TSMConexao.ProximoCodigo(Tabela: String): Int64;
+const
+  Acrescimo = 1;
 var
   Transacao: TDBXTransaction;
 begin
@@ -311,44 +225,41 @@ begin
     CDSProximoCodigo.CreateDataSet;
   end;
 
-  with Conexao do
-  begin
-    Transacao := BeginTransaction(TDBXIsolations.ReadCommitted);
-    try
-      with CDSProximoCodigo do
+  Transacao := ConexaoBD.BeginTransaction(TDBXIsolations.ReadCommitted);
+  try
+    repeat //similar ao DO WHILE
+      CDSProximoCodigo.Close;
+      CDSProximoCodigo.Params.ParamByName('TABELA').AsString  := Tabela;
+      CDSProximoCodigo.Open;
+      if CDSProximoCodigo.IsEmpty then
       begin
-        repeat //similar ao DO WHILE
-          Close;
-          Params.ParamByName('TABELA').AsString  := Tabela;
-          Open;
-          if IsEmpty then
-          begin
-            Insert;
-            FieldByName('TABELA_AUTOINC').AsString  := Tabela;
-            FieldByName('CODIGO_AUTOINC').AsInteger := Acrescimo;
-          end
-          else
-          begin
-            Edit;
-            FieldByName('CODIGO_AUTOINC').AsInteger := FieldByName('CODIGO_AUTOINC').AsInteger + Acrescimo;
-          end;
-          Post;
-        until (ApplyUpdates(0) = 0);
-        Result := FieldByName('CODIGO_AUTOINC').AsLargeInt;
-        Close;
+        CDSProximoCodigo.Insert;
+        CDSProximoCodigo.FieldByName('TABELA_AUTOINC').AsString  := Tabela;
+        CDSProximoCodigo.FieldByName('CODIGO_AUTOINC').AsInteger := Acrescimo;
+      end
+      else
+      begin
+        CDSProximoCodigo.Edit;
+        CDSProximoCodigo.FieldByName('CODIGO_AUTOINC').AsInteger := CDSProximoCodigo.FieldByName('CODIGO_AUTOINC').AsInteger + Acrescimo;
       end;
+      CDSProximoCodigo.Post;
+    until (CDSProximoCodigo.ApplyUpdates(0) = 0);
 
-      if HasTransaction(Transacao) then
-        CommitFreeAndNil(Transacao);
-    except on E: Exception do
-      begin
-        if HasTransaction(Transacao) then
-          RollbackFreeAndNil(Transacao);
-        raise Exception.Create('Erro na Tabela: ' + Tabela + #13 + E.Message);
-      end;
+    Result := CDSProximoCodigo.FieldByName('CODIGO_AUTOINC').AsLargeInt;
+    CDSProximoCodigo.Close;
+
+    if ConexaoBD.HasTransaction(Transacao) then
+      ConexaoBD.CommitFreeAndNil(Transacao);
+  except on E: Exception do
+    begin
+      if ConexaoBD.HasTransaction(Transacao) then
+        ConexaoBD.RollbackFreeAndNil(Transacao);
+      raise Exception.Create('Erro na Tabela: ' + Tabela + #13 + E.Message);
     end;
   end;
 end;
+
+{$REGION 'AcertaProximoCodigo'}
 
 procedure TSMConexao.AcertaProximoCodigo(NomeDaClasse: String; Quebra: Integer; CriarTransacao: Boolean = True);
 var
@@ -419,6 +330,6 @@ begin
     end;
   end;
 }end;
-
+{$ENDREGION}
 
 end.

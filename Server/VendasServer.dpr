@@ -18,7 +18,8 @@ uses
   USMCadStatus in 'USMCadStatus.pas' {SMCadStatus: TDSServerModule},
   ClassDataSet in '..\Class\ClassDataSet.pas',
   Duvidas in '..\Duvidas.pas',
-  Exemploes in '..\Exemploes.pas';
+  Exemploes in '..\Exemploes.pas',
+  USMConexao in 'USMConexao.pas' {SMConexao: TDSServerModule};
 
 {$R *.res}
 
@@ -27,6 +28,7 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TServidor, Servidor);
   Application.CreateForm(TSC, SC);
+  Application.CreateForm(TSMConexao, SMConexao);
   Application.Run;
 end.
 
