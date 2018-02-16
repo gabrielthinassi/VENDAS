@@ -19,7 +19,6 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
     DoubleBuffered = False
     ParentDoubleBuffered = False
     TabOrder = 0
-    ExplicitTop = 312
     object txtAjuda: TDBText
       Left = 1
       Top = 1
@@ -139,6 +138,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
       Height = 44
       Align = alTop
       Caption = '&Incluir'
+      OnClick = btnIncluirClick
       ExplicitTop = 2
     end
     object btnExcluir: TSpeedButton
@@ -148,6 +148,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
       Height = 44
       Align = alTop
       Caption = '&Excluir'
+      OnClick = btnExcluirClick
     end
     object btnGravar: TSpeedButton
       Left = 1
@@ -156,6 +157,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
       Height = 44
       Align = alTop
       Caption = '&Gravar'
+      OnClick = btnGravarClick
     end
     object btnCancelar: TSpeedButton
       Left = 1
@@ -164,6 +166,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
       Height = 44
       Align = alTop
       Caption = '&Cancelar'
+      OnClick = btnCancelarClick
     end
     object btnPesquisar: TSpeedButton
       Left = 1
@@ -174,19 +177,20 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
       Caption = '&Pesquisar'
     end
   end
-  object tbctrlCadastro: TTabControl
+  object pgctrlCadastro: TPageControl
     Left = 126
     Top = 41
     Width = 374
     Height = 268
+    ActivePage = pgEdit
     Align = alClient
     TabOrder = 3
-    Tabs.Strings = (
-      'Edit')
-    TabIndex = 0
+    object pgEdit: TTabSheet
+      Caption = 'Edit'
+    end
   end
   object DSCadastro: TDataSource
-    Left = 150
-    Top = 75
+    Left = 235
+    Top = 55
   end
 end

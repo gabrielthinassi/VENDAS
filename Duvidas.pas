@@ -11,4 +11,10 @@ implementation
 {
 2 - Porque depois que testa a Conexão e da Sucesso, mesmo alterando a porta depois, não da mais erro ? FrmServidor;
 }
+
+
+{
+3 - Qual a diferença de utilizar uma Property Publica e declarar uma Variável para acessar uma determinada classe?
+Ex: FrmPaiCadastro (CDSCadastro e FDMCadastro)
+}
 end.

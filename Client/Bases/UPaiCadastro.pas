@@ -106,11 +106,7 @@ type
     FBotaoCancelarHabilitado: Boolean;
     FBotaoOutrosHabilitado: Boolean;
     FBotaoRelatorioHabilitado: Boolean;
-    procedure ConfiguraPermissoes;
-    procedure AlinharBotoesPanelNavigator;
   protected
-    procedure VerificarOutrasPermissoesDeExclusao; virtual;
-
     property BotaoIncluirHabilitado: Boolean read FBotaoIncluirHabilitado write FBotaoIncluirHabilitado;
     property BotaoExcluirHabilitado: Boolean read FBotaoExcluirHabilitado write FBotaoExcluirHabilitado;
     property BotaoGravarHabilitado: Boolean read FBotaoGravarHabilitado write FBotaoGravarHabilitado;
@@ -518,13 +514,6 @@ var
 begin
   if (FDMCadastro.CDSCadastro.State in [dsInsert, dsEdit]) then
     Exit;
-
-  EventoExit        := PanelChave.OnExit;
-  PanelChave.OnExit := nil;
-
-  // Evitar que seja executado, duas vezes
-  EventoStateChange := DS.OnStateChange;
-  DS.OnStateChange  := nil;
 
   try
     EditCodigo.AsInteger         := 0;
