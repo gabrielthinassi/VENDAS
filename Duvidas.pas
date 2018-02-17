@@ -17,4 +17,12 @@ implementation
 3 - Qual a diferença de utilizar uma Property Publica e declarar uma Variável para acessar uma determinada classe?
 Ex: FrmPaiCadastro (CDSCadastro e FDMCadastro)
 }
+
+
+{
+4 - Porque usar isso?! Pq não acessar logo a classe direto ? TClassPaiCadastro ?
+//TFClassPaiCadastro = class of TClassPaiCadastro;
+
+}
+
 end.

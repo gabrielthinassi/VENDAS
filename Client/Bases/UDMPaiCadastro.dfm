@@ -6,17 +6,6 @@ inherited DMPaiCadastro: TDMPaiCadastro
     Aggregates = <>
     Params = <>
     RemoteServer = DSPCCadastro
-    BeforeOpen = CDSCadastroBeforeOpen
-    AfterOpen = CDSCadastroAfterOpen
-    BeforeClose = CDSCadastroBeforeClose
-    BeforeEdit = CDSCadastroBeforeEdit
-    BeforePost = CDSCadastroBeforePost
-    AfterPost = CDSCadastroAfterPost
-    BeforeCancel = CDSCadastroBeforeCancel
-    AfterCancel = CDSCadastroAfterCancel
-    BeforeDelete = CDSCadastroBeforeDelete
-    AfterDelete = CDSCadastroAfterDelete
-    OnReconcileError = CDSCadastroReconcileError
     Left = 48
     Top = 53
   end

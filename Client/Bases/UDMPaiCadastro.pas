@@ -3,10 +3,32 @@ unit UDMPaiCadastro;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, DB, DBClient, MConnect, Typinfo, DateUtils, DBCtrls, Grids, DBGrids,
-  JvDBGrid, Datasnap.DSConnect, System.StrUtils, System.Math,
-  UDMPai, ClassPaiCadastro, Data.DBXDataSnap, Data.DBXCommon, IPPeerClient,
+  Windows,
+  Messages,
+  SysUtils,
+  Variants,
+  Classes,
+  Graphics,
+  Controls,
+  Forms,
+  Dialogs,
+  DB,
+  DBClient,
+  MConnect,
+  Typinfo,
+  DateUtils,
+  DBCtrls,
+  Grids,
+  DBGrids,
+  JvDBGrid,
+  Datasnap.DSConnect,
+  System.StrUtils,
+  System.Math,
+  UDMPai,
+  ClassPaiCadastro,
+  Data.DBXDataSnap,
+  Data.DBXCommon,
+  IPPeerClient,
   Data.SqlExpr;
 
 type
@@ -17,48 +39,17 @@ type
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
 
-    procedure CDSCadastroBeforeOpen(DataSet: TDataSet);
-    procedure CDSCadastroAfterOpen(DataSet: TDataSet);
-    procedure CDSCadastroBeforeCancel(DataSet: TDataSet);
-    procedure CDSCadastroAfterCancel(DataSet: TDataSet);
-    procedure CDSCadastroBeforeEdit(DataSet: TDataSet);
-    procedure CDSCadastroBeforePost(DataSet: TDataSet);
-    procedure CDSCadastroAfterPost(DataSet: TDataSet);
-    procedure CDSCadastroBeforeDelete(DataSet: TDataSet);
-    procedure CDSCadastroAfterDelete(DataSet: TDataSet);
-    procedure CDSCadastroBeforeClose(DataSet: TDataSet);
-    procedure CDSCadastroReconcileError(DataSet: TCustomClientDataSet; e: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction);
-
-    procedure AfterPost(DataSet: TDataSet); virtual;
   private
-    { GravandoEdicao: Boolean; }
-
-    FClasseFilha: TFClassPaiCadastro;
-
-    FCodigoAtual: integer;
-    FIdDetalhe: integer;
-    FRefreshRecordAfterPost: boolean;
-
-    FFiltroDinamicoNavegacao: String;
-
-    FAposRolarCadastro: TDataSetNotifyEvent;
-    FClasseNavegacao: TFClassPaiCadastro;
+    FClasseFilha: TClassPaiCadastro;
 
     function GetIdDetalhe: integer;
-    procedure AcertarDefaultDinamico(DataSet: TDataSet);
-    function FiltroFixoNavegacao: string;
+    function ProximoCodigo(Tabela: string): int64;
   protected
-    procedure AbreDetalhes; virtual;
-    procedure Cancele; virtual;
-    procedure ZeraParametros; virtual;
-    procedure VerificarFechamento(DataSet: TDataSet; Classe: TFClassPaiCadastro); virtual;
   public
-    property ClasseFilha: TFClassPaiCadastro read FClasseFilha write FClasseFilha;
-    property CodigoAtual: integer read FCodigoAtual write FCodigoAtual;
-    property RefreshRecordAfterPost: boolean read FRefreshRecordAfterPost write FRefreshRecordAfterPost;
+    property ClasseFilha: TClassPaiCadastro read FClasseFilha write FClasseFilha;
 
-    property ClasseNavegacao: TFClassPaiCadastro read FClasseNavegacao write FClasseNavegacao;
-    property FiltroDinamicoNavegacao: String read FFiltroDinamicoNavegacao write FFiltroDinamicoNavegacao;
+    //property CodigoAtual: integer read FCodigoAtual write FCodigoAtual;
+    //property RefreshRecordAfterPost: boolean read FRefreshRecordAfterPost write FRefreshRecordAfterPost;
 
     property IdDetalhe: integer read GetIdDetalhe;
 
@@ -72,14 +63,7 @@ type
 
     function Aplique(Exclusao: boolean = false): integer; virtual;
 
-    procedure AtribuiAutoIncDetalhe(DataSet: TDataSet; Classe: TFClassPaiCadastro; CampoChaveEstrangeira: String);
-
-    class procedure ValidateGeral(Sender: TField; CampoDescricao: string; sClasseBusca: string; Filtro: string = ''; NomeCDSCache: string = ''; ValidaStatus: boolean = True; ValidaStatusBloqueio: boolean = False); overload;
-    class procedure ValidateGeral(Sender: TField; CampoDescricao: string; ClasseBusca: TFClassPaiCadastro; Filtro: string = ''; NomeCDSCache: string = ''; ValidaStatus: boolean = True; ValidaStatusBloqueio: boolean = False); overload;
-    class procedure ValidateGeral(Sender: TField; CampoDescricao: string; ClasseBusca: TFClassPaiCadastro; Filtro: string; ValidaStatusBloqueio: boolean); overload;
-    class procedure ValidateGeral(Sender: TField; Campos: array of string; ClasseBusca: TFClassPaiCadastro; Empresa: integer = -1; Filtro: string = ''); overload;
-    class procedure ValidateGeral(CampoBusca: TField; CamposRetorno: array of string; NomeCampoWhere: string; ClasseBusca: TFClassPaiCadastro; Filtro: string = ''); overload;
-    class procedure ValidateGeral(Sender: TField; Campos: array of string; CamposDataSet: array of string; ClasseBusca: TFClassPaiCadastro; Empresa: integer = -1; Filtro: string = ''); overload;
+    procedure AtribuiAutoIncDetalhe(DataSet: TDataSet; Classe: TClassPaiCadastro; CampoChaveEstrangeira: String);
   end;
 
 var
@@ -97,16 +81,11 @@ uses Constantes, ClassDataSet, UDMConexao;
 procedure TDMPaiCadastro.DataModuleCreate(Sender: TObject);
 begin
   inherited;
-  FIdDetalhe := 0;
-  FRefreshRecordAfterPost := True;
-
   DSPCCadastro.SQLConnection := DMConexao.ConexaoDS;
 
   if DSPCCadastro.ServerClassName <> '' then
     CDSCadastro.RemoteServer := DSPCCadastro;
   CDSCadastro.ProviderName := 'DSPCadastro';
-
-  ZeraParametros;
 
   with FClasseFilha do
   begin
@@ -124,376 +103,37 @@ begin
   DSPCCadastro.SQLConnection := nil;
 end;
 
-function TDMPaiCadastro.FiltroFixoNavegacao: string;
-begin
-  Result := '';
-end;
-
-procedure TDMPaiCadastro.CDSCadastroBeforeOpen(DataSet: TDataSet);
-var
-  x: integer;
-begin
-  with CDSCadastro do
-    for x := 0 to Params.Count - 1 do
-    begin
-      if AnsiUpperCase(Params.Items[x].Name) = 'COD' then
-        Params.ParamByName('COD').AsInteger := FCodigoAtual
-    end;
-end;
-
-procedure TDMPaiCadastro.CDSCadastroBeforeCancel(DataSet: TDataSet);
-begin
-  inherited;
-  DesbloquearRegistros(false);
-end;
-
-procedure TDMPaiCadastro.CDSCadastroBeforeClose(DataSet: TDataSet);
-begin
-  CDSCadastro.SalvarIndice(Self.Name);
-end;
-
-procedure TDMPaiCadastro.CDSCadastroBeforeDelete(DataSet: TDataSet);
-begin
-  if (DMConexao.SecaoAtual.SistemaSomenteLeitura) then
-  begin
-    TCaixasDeDialogo.Aviso(sMensagemSistemaSomenteLeitura);
-    Abort;
-  end;
-
-  // Esse teste foi deixado aqui, para prevenir o esquecimento
-  // de colocar no DM que gerencia um PaiCadastroGrade
-  if (not FUsuarioExclui) then
-  begin
-    TCaixasDeDialogo.Aviso(sRestricaoExclusao);
-    Abort;
-  end;
-
-  VerificarFechamento(CDSCadastro, FClasseFilha);
-
-  if FClasseFilha.CampoDescricao <> '' then
-    DMLookup.AtualizaCDSLookup(FClasseFilha, CDSCadastro, True);
-
-  Excluindo := True;
-end;
-
-procedure TDMPaiCadastro.CDSCadastroBeforeEdit(DataSet: TDataSet);
-var
-  Quebra: integer;
-  CodigoDesconsiderado, UsuBloq, DataHoraBloq: string;
-  Retorno: OleVariant;
-
-  procedure RelerRegistro(var CDSPrincipal: TClientDataSet);
-  type
-    TDetalhes = record
-      Cds: TClientDataSet;
-      BM: TBookMark;
-      EvAfterScroll, EvBeforeScroll: procedure(DataSet: TDataSet) of object;
-    end;
-  var
-    x: integer;
-    Detalhes: array of TDetalhes;
-
-    procedure PegaDetalhes(DS: TDataSource);
-    var
-      y, T: integer;
-    begin
-      // Pegar todos os CDS que recebem dados do DS em questão
-      for y := 0 to ComponentCount - 1 do
-        if (Components[y] is TClientDataSet) and
-          ((Components[y] as TClientDataSet).DataSetField <> nil) and
-          ((Components[y] as TClientDataSet).DataSetField.DataSet = DS.DataSet) then
-        begin
-          // grava o BookMark dele
-          T := Length(Detalhes);
-          SetLength(Detalhes, T + 1);
-          Detalhes[T].Cds := (Components[y] as TClientDataSet);
-          Detalhes[T].EvAfterScroll := Detalhes[T].Cds.AfterScroll;
-          Detalhes[T].EvBeforeScroll := Detalhes[T].Cds.BeforeScroll;
-          Detalhes[T].BM := Detalhes[T].Cds.GetBookmark;
-          (Components[y] as TClientDataSet).AfterScroll := nil;
-          (Components[y] as TClientDataSet).BeforeScroll := nil;
-        end;
-    end;
-
-  begin
-    SetLength(Detalhes, 0);
-
-    try
-      // Pegar todos os DataSources que apontam para o CDS em questão
-      for x := 0 to Owner.ComponentCount - 1 do
-        if (Owner.Components[x] is TDataSource) and
-          ((Owner.Components[x] as TDataSource).DataSet = CDSPrincipal) then
-          PegaDetalhes(Owner.Components[x] as TDataSource);
-
-      CDSPrincipal.RefreshRecord;
-
-      for x := Low(Detalhes) to High(Detalhes) do
-        with Detalhes[x] do
-          Cds.GotoBookmark(BM);
-    finally
-      for x := Low(Detalhes) to High(Detalhes) do
-        with Detalhes[x] do
-        begin
-          Cds.FreeBookmark(BM);
-          Cds.AfterScroll := EvAfterScroll;
-          Cds.BeforeScroll := EvBeforeScroll;
-        end;
-    end;
-  end;
-
-begin
-  if (DMConexao.SecaoAtual.SistemaSomenteLeitura) then
-  begin
-    TCaixasDeDialogo.Aviso(sMensagemSistemaSomenteLeitura);
-    Abort;
-  end;
-
-  if (CDSCadastro.UpdateStatus <> usInserted) and (not FUsuarioAltera) then
-  begin
-    TCaixasDeDialogo.Aviso(sRestricaoAlteracao);
-    Abort;
-  end;
-
-  if (CDSCadastro.UpdateStatus <> usInserted) then
-    VerificarFechamento(CDSCadastro, FClasseFilha);
-
-  // Tratamento de edicao simultanea
-  with CDSCadastro, ClasseFilha do
-    if (BloqueiaEdicaoSimultanea) and (not EdicaoAposErro) and (not ImportandoRegistros) and not(ReplicandoRegistros) then
-    begin
-      if (CampoEmpresa = '') then
-        Quebra := 0
-      else
-        Quebra := FieldByName(CampoEmpresa).AsInteger;
-
-      Retorno := DMConexao.ExecuteMethods('TSMConexao.IncluiRegistroEmEdicao', [TabelaPrincipal, Quebra, FieldByName(CampoChave).AsString, 0]);
-
-      CodigoDesconsiderado := Retorno[0];
-      UsuBloq := Retorno[1];
-      DataHoraBloq := Retorno[2];
-
-      if (UsuBloq <> '') then
-      begin
-        TCaixasDeDialogo.Aviso(Format(Constantes.sRegistroBloqueado, [Descricao, AnsiUpperCase(UsuBloq), DataHoraBloq, CodigoDesconsiderado]));
-        Abort;
-      end else
-        CodigoBloqueio := CodigoDesconsiderado;
-    end;
-
-  // if (CDSCadastro.ChangeCount = 0) then
-  // RefreshRecord é necessário, pois senão a atribuição de responsabilidade pela última edição ficará comprometida.
-  // Ou seja, se o campo USUARIOALTERACAO não for modificado, não será gerada SQL de atualização do campo.
-  // E se durante o período entre a visualização do registro e edição do mesmo, outro usuário editar e gravar o registro.
-  // A responsabilidade permaneceria para ele, quando na verdade deveria ser do que está editando.
-
-  // Em contrapartida, RefreshRecord pode gerar um comportamento estranho:
-  // Se no período entre a visualização e edição do registro, outro usuário fizer uma alteração no registro,
-  // ao digitar no meio de um campo string, o conteúdo do campo será atualizado e o caracter digitado sairá no princípio do campo
-  // CDSCadastro.RefreshRecord;
-  // RelerRegistro(CDSCadastro);
-end;
-
-procedure TDMPaiCadastro.CDSCadastroBeforePost(DataSet: TDataSet);
-begin
-  VerificarFechamento(CDSCadastro, FClasseFilha);
-
-  // GravandoEdicao := (CDSCadastro.State = dsEdit);
-  with CDSCadastro, FClasseFilha do
-    // Foi trocado de (State = dsInsert) para (UpdateStatus = usInserted)
-    // Pois em alguns locais pode ser interessante não executar esse evento
-    // quando um dataset detalhe for inserir e voltar a executá-lo depois.
-    // Ex: Borderô de Remessa Bancária
-    if { (State = dsInsert) } (UpdateStatus = usInserted) and
-      ((FieldByName(CampoChave).IsNull) or (FieldByName(CampoChave).AsInteger <= 0) or
-      ((FImportandoRegistros) and (not GerouNovoCodigo))) then
-    begin
-      FCodigoAtual := Novo;
-      FieldByName(CampoChave).AsInteger := FCodigoAtual;
-      GerouNovoCodigo := True;
-    end;
-end;
-
-procedure TDMPaiCadastro.AfterPost(DataSet: TDataSet);
-var
-  BM: TBookMark;
-begin
-  ContinuarTentandoGravar := True;
-  repeat
-    if (not ContinuarTentandoGravar) then
-    begin
-      // CDSCadastro.Edit;
-      Break;
-    end;
-  until (Aplique = 0);
-
-  GerouNovoCodigo := false;
-
-  DesbloquearRegistros(false);
-
-  // Reler informações modificadas no servidor, como por exemplo a atribuição de responsabilidade
-  if (CDSCadastro.ChangeCount = 0) then
-  begin
-    // O RefreshRecord funciona, mas se por algum motivo o registro
-    // após a gravação não estiver disponível, ocorre erro.
-    // Ex: Cadastro de contas: se excluir todos os usuários e gravar a conta
-    BM := CDSCadastro.GetBookmark;
-    try
-      if FRefreshRecordAfterPost then
-        CDSCadastro.RefreshRecord
-      else
-      begin
-        CDSCadastro.Close;
-        CDSCadastro.Open;
-      end;
-      if BM <> nil then
-        if CDSCadastro.BookmarkValid(BM) then
-          CDSCadastro.GotoBookmark(BM);
-    finally
-      CDSCadastro.FreeBookmark(BM);
-    end;
-  end;
-
-  if FClasseFilha.CampoDescricao <> '' then
-    DMLookup.AtualizaCDSLookup(FClasseFilha, CDSCadastro, True);
-end;
-
-procedure TDMPaiCadastro.CDSCadastroAfterCancel(DataSet: TDataSet);
-begin
-  Cancele;
-end;
-
-procedure TDMPaiCadastro.CDSCadastroAfterDelete(DataSet: TDataSet);
-begin
-  try
-    Aplique(True);
-  finally
-    Excluindo := false;
-  end;
-end;
-
-procedure TDMPaiCadastro.CDSCadastroAfterOpen(DataSet: TDataSet);
-begin
-  CDSCadastro.RestaurarIndice(Self.Name);
-end;
-
-procedure TDMPaiCadastro.CDSCadastroAfterPost(DataSet: TDataSet);
-begin
-  // Esse evento não deve ter código algum, pois em estruturas master/detalhe o
-  // master é gravado (se estiver inserindo) e for inserido um detalhe.
-  // Neste caso, o tratamento é feito na função Aplique e
-  // nos demais é chamada a procedure AfterPost explicitamente.
-end;
-
-procedure TDMPaiCadastro.CDSCadastroReconcileError(DataSet: TCustomClientDataSet; e: EReconcileError; UpdateKind: TUpdateKind; var Action: TReconcileAction);
-var
-  x: integer;
-  CodigoErro: string;
-begin
-  // denis falou que podia tirar, veja com ele {$MESSAGE 'MELHORAR O TRATAMENTO DE ERRO'}
-
-  x := Pos('ERROR CODE: ', AnsiUpperCase(e.Message));
-  CodigoErro := Trim(Copy(e.Message, x + 12, MaxInt));
-
-  ContinuarTentandoGravar := false;
-
-  if (CodigoErro = '345') and (UpdateKind = ukInsert) then
-  begin
-    // Violação de chave primária, Em tese não deve ocorrer nunca, mas se ocorrer...
-    ContinuarTentandoGravar := TCaixasDeDialogo.Confirma('Código já existe, tentar próximo? Se escolher "NÃO" o registro será perdido.');
-    if ContinuarTentandoGravar then
-    begin
-      FCodigoAtual := Novo;
-      DataSet.FieldByName(FClasseFilha.CampoChave).NewValue := FCodigoAtual;
-      Action := raCorrect;
-    end
-    else
-      Action := raAbort;
-  end
-  else
-  begin
-    Action := raAbort;
-    TrataErro(e);
-  end;
-end;
-
-procedure TDMPaiCadastro.AbreDetalhes;
-begin
-  // Não apagar, o código dessa função só existirá em alguns cadastros
-end;
-
-procedure TDMPaiCadastro.AcertarDefaultDinamico(DataSet: TDataSet);
-begin
-  DataSet.AcertarDefaultDinamico(DMConexao.SecaoAtual.Usuario.Nome, DMConexao.DataHora);
-end;
-
 function TDMPaiCadastro.Primeiro: integer;
 var
-  s: string;
-  e: integer;
-  Classe: TFClassPaiCadastro;
+  SQL: string;
+  Classe: TClassPaiCadastro;
 begin
-  // Retorna o primeiro registro da tabela em questão
-  if Assigned(FClasseNavegacao) then
-    Classe := FClasseNavegacao
-  else
-    Classe := FClasseFilha;
+  Classe := FClasseFilha;
 
   with Classe do
   begin
-    s := 'select min(' + TabelaPrincipal + '.' + CampoChave + ')' + #13 +
-      ' from ' + TabelaPrincipal + #13 +
-      ' where (' + TabelaPrincipal + '.' + CampoChave + ' <> 0)';
-    if (CampoEmpresa <> '') then
-    begin
-      if (ConstanteSistema.Sistema in [ConstanteSistema.cSistemaDepPessoal, ConstanteSistema.cSistemaContabilidade]) then
-        e := DMConexao.SecaoAtual.Empresa.Estabelecimento
-      else
-        e := DMConexao.SecaoAtual.Empresa.Codigo;
-      s := s + #13 + ' and (' + TabelaPrincipal + '.' + CampoEmpresa + ' = ' + IntToStr(e) + ')';
-    end;
-    if (FiltroFixoNavegacao <> '') then
-      s := s + #13 + ' and ' + FiltroFixoNavegacao;
-    if (FiltroDinamicoNavegacao <> '') then
-      s := s + #13 + ' and ' + FiltroDinamicoNavegacao;
+    SQL := ' SELECT MIN(' + TabelaPrincipal + '.' + CampoChave + ')' +#13+
+           ' FROM '  + TabelaPrincipal +#13+
+           ' WHERE ' + TabelaPrincipal + '.' + CampoChave + ' <> 0';
   end;
-  Result := DMConexao.ExecuteScalar(s);
+  Result := DMConexao.ExecuteScalar(SQL);
 end;
 
 function TDMPaiCadastro.Proximo(Atual: integer): integer;
 var
-  s: string;
-  e: integer;
-  Classe: TFClassPaiCadastro;
+  SQL: string;
+  Classe: TClassPaiCadastro;
 begin
-  // Retorna o proximo registro da tabela em questão
-  if Assigned(FClasseNavegacao) then
-    Classe := FClasseNavegacao
-  else
-    Classe := FClasseFilha;
+  Classe := FClasseFilha;
 
   with Classe do
   begin
-    s := 'select min(' + TabelaPrincipal + '.' + CampoChave + ')' + #13 +
-      ' from ' + TabelaPrincipal + #13 +
-      ' where (' + TabelaPrincipal + '.' + CampoChave + ' > ' + IntToStr(Atual) + ')';
-
-    if (Atual < 0) then
-      S := S + ' and (' + TabelaPrincipal + '.' + CampoChave + ' <> 0)';
-
-    if (CampoEmpresa <> '') then
-    begin
-      if (ConstanteSistema.Sistema in [ConstanteSistema.cSistemaDepPessoal, ConstanteSistema.cSistemaContabilidade]) then
-        e := DMConexao.SecaoAtual.Empresa.Estabelecimento
-      else
-        e := DMConexao.SecaoAtual.Empresa.Codigo;
-      s := s + #13 + ' and (' + TabelaPrincipal + '.' + CampoEmpresa + ' = ' + IntToStr(e) + ')';
-    end;
-    if (FiltroFixoNavegacao <> '') then
-      s := s + #13 + ' and ' + FiltroFixoNavegacao;
-    if (FiltroDinamicoNavegacao <> '') then
-      s := s + #13 + ' and ' + FiltroDinamicoNavegacao;
+    SQL := ' SELECT MIN(' + TabelaPrincipal + '.' + CampoChave + ')' +#13+
+           ' FROM '  + TabelaPrincipal +#13+
+           ' WHERE ' + TabelaPrincipal + '.' + CampoChave + ' > ' + IntToStr(Atual) +#13+
+           ' AND '   + TabelaPrincipal + '.' + CampoChave + ' <> 0)';
   end;
-  Result := DMConexao.ExecuteScalar(s);
+  Result := DMConexao.ExecuteScalar(SQL);
 end;
 
 
@@ -501,122 +141,43 @@ function TDMPaiCadastro.ProximoCodigo(Tabela: string): int64;
 begin
   //Busca o Próximo Código no Servidor de Aplicação
   Tabela := AnsiUpperCase(Tabela);
-  Result := ExecuteMethods('TSMConexao.ProximoCodigo', [Tabela]);
-end;
-
-function TDMPaiCadastro.ProximoCodigoAcrescimo(Tabela: string;
-  Acrescimo: Integer): int64;
-begin
-  //Busca o Próximo Código no Servidor de Aplicação
-  //Já incrementado de acordo com o parametro Acrescimo
-  Tabela := AnsiUpperCase(Tabela);
-  Result := ExecuteMethods('TSMConexao.ProximoCodigoAcrescimo', [Tabela, Acrescimo]);
+  Result := DMConexao.ExecutaMetodo('TSMConexao.ProximoCodigo', [Tabela]);
 end;
 
 function TDMPaiCadastro.Anterior(Atual: integer): integer;
 var
-  s: string;
-  e: integer;
-  Classe: TFClassPaiCadastro;
+  SQL: string;
+  Classe: TClassPaiCadastro;
 begin
-  // Retorna o registro anterior da tabela em questão
-  if Assigned(FClasseNavegacao) then
-    Classe := FClasseNavegacao
-  else
-    Classe := FClasseFilha;
+  Classe := FClasseFilha;
 
   with Classe do
   begin
-    s := 'select max(' + TabelaPrincipal + '.' + CampoChave + ')' + #13 +
-      ' from ' + TabelaPrincipal + #13 +
-      ' where (' + TabelaPrincipal + '.' + CampoChave + ' < ' + IntToStr(Atual) + ')' + #13 +
-      ' and (' + TabelaPrincipal + '.' + CampoChave + ' <> 0)';
-    if (CampoEmpresa <> '') then
-    begin
-      if (ConstanteSistema.Sistema in [ConstanteSistema.cSistemaDepPessoal, ConstanteSistema.cSistemaContabilidade]) then
-        e := DMConexao.SecaoAtual.Empresa.Estabelecimento
-      else
-        e := DMConexao.SecaoAtual.Empresa.Codigo;
-      s := s + #13 + ' and (' + TabelaPrincipal + '.' + CampoEmpresa + ' = ' + IntToStr(e) + ')';
-    end;
-    if (FiltroFixoNavegacao <> '') then
-      s := s + #13 + ' and ' + FiltroFixoNavegacao;
-    if (FiltroDinamicoNavegacao <> '') then
-      s := s + #13 + ' and ' + FiltroDinamicoNavegacao;
+    SQL := ' SELECT MAX(' + TabelaPrincipal + '.' + CampoChave + ')' +#13+
+           ' FROM '  + TabelaPrincipal +#13+
+           ' WHERE ' + TabelaPrincipal + '.' + CampoChave + ' < ' + IntToStr(Atual) +#13+
+           ' AND '   + TabelaPrincipal + '.' + CampoChave + ' <> 0)';
   end;
-  Result := DMConexao.ExecuteScalar(s);
+  Result := DMConexao.ExecuteScalar(SQL);
 end;
 
 function TDMPaiCadastro.Ultimo: integer;
 var
-  s: string;
-  e: integer;
-  Classe: TFClassPaiCadastro;
+  SQL: string;
+  Classe: TClassPaiCadastro;
 begin
-  // Retorna o último registro da tabela em questão
-  if Assigned(FClasseNavegacao) then
-    Classe := FClasseNavegacao
-  else
-    Classe := FClasseFilha;
+  Classe := FClasseFilha;
 
   with Classe do
   begin
-    s := 'select max(' + TabelaPrincipal + '.' + CampoChave + ')' + #13 +
-      ' from ' + TabelaPrincipal;
-    if (CampoEmpresa <> '') then
-    begin
-      if (ConstanteSistema.Sistema in [ConstanteSistema.cSistemaDepPessoal, ConstanteSistema.cSistemaContabilidade]) then
-        e := DMConexao.SecaoAtual.Empresa.Estabelecimento
-      else
-        e := DMConexao.SecaoAtual.Empresa.Codigo;
-      s := s + #13 + ' where (' + TabelaPrincipal + '.' + CampoEmpresa + ' = ' + IntToStr(e) + ')';
-    end;
-    if (FiltroFixoNavegacao <> '') then
-      s := s + #13 + IfThen(Pos('where', s) > 0, ' and ', ' where ') + FiltroFixoNavegacao;
-    if (FiltroDinamicoNavegacao <> '') then
-      s := s + #13 + IfThen(Pos('where', s) > 0, ' and ', ' where ') + FiltroDinamicoNavegacao;
+    SQL := ' SELECT MAX(' + TabelaPrincipal + '.' + CampoChave + ')' +#13+
+           ' FROM '  + TabelaPrincipal +#13+
+           ' WHERE ' + TabelaPrincipal + '.' + CampoChave + ' <> 0';
   end;
-  Result := DMConexao.ExecuteScalar(s);
+  Result := DMConexao.ExecuteScalar(SQL);
 end;
 
-class procedure TDMPaiCadastro.ValidateGeral(Sender: TField; Campos,
-  CamposDataSet: array of string; ClasseBusca: TFClassPaiCadastro;
-  Empresa: integer; Filtro: string);
-var
-  ValidacaoAnt: TFieldNotifyEvent;
-begin
-  if not(Sender.DataSet.State in [dsEdit, dsInsert]) then
-    Exit;
-  with Sender do
-  begin
-    ValidacaoAnt := OnValidate;
-    OnValidate := nil;
-    try
-      DMLookup.BuscaCampos(ClasseBusca, Campos, CamposDataSet, DataSet, AsInteger, Empresa, Filtro);
-    finally
-      OnValidate := ValidacaoAnt;
-    end;
-  end;
-end;
 
-class procedure TDMPaiCadastro.ValidateGeral(Sender: TField; CampoDescricao: string; ClasseBusca: TFClassPaiCadastro; Filtro: string;
-  ValidaStatusBloqueio: boolean);
-var
-  ValidacaoAnt: TFieldNotifyEvent;
-begin
-  if not(Sender.DataSet.State in [dsEdit, dsInsert]) then
-    Exit;
-  with Sender do
-  begin
-    ValidacaoAnt := OnValidate;
-    OnValidate := nil;
-    try
-      DataSet.FieldByName(CampoDescricao).AsString := DMLookup.BuscaDescricao(ClasseBusca, AsInteger, -1, True, Filtro, '', ValidaStatusBloqueio);
-    finally
-      OnValidate := ValidacaoAnt;
-    end;
-  end;
-end;
 
 procedure TDMPaiCadastro.VerificarFechamento(DataSet: TDataSet; Classe: TFClassPaiCadastro);
 var
@@ -769,24 +330,6 @@ begin
       DMLookup.BuscaCampos(ClasseBusca, NomeCampoWhere, CampoBusca, CamposRetorno, Filtro);
     finally
       OnValidate := ValidacaoAnt;
-    end;
-  end;
-end;
-
-procedure TDMPaiCadastro.ZeraParametros;
-var
-  x: integer;
-begin
-  with CDSCadastro do
-  begin
-    //Isso faz com que os parametros sejam atualizados
-    FetchParams;
-    for x := 0 to CDSCadastro.Params.Count - 1 do
-    begin
-      if AnsiUpperCase(Params.Items[x].Name) = 'COD' then
-        Params.ParamByName('COD').AsInteger := -1
-      else if AnsiUpperCase(Params.Items[x].Name) = 'REGISTRO' then
-        Params.ParamByName('REGISTRO').AsInteger := -1;
     end;
   end;
 end;

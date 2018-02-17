@@ -19,8 +19,6 @@ type
     procedure DataModuleDestroy(Sender: TObject);
   private
     procedure CarregarListaDeTabelasEProceduresDoBDD;
-    procedure CarregarUnitsProtegidas;
-    procedure CarregarProcessamentosProtegidos;
   public
     function ExecutaMetodo(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
     function ExecuteReader(sql: string; TamanhoPacote: Integer = 1000; MonitoraSQL: Boolean = True): OleVariant;
@@ -58,8 +56,19 @@ end;
 
 
 function TDMConexao.ExecutaMetodo(Metodo: string; Parametros_Valor: array of OleVariant): OleVariant;
+var
+  Comando : TDBXCommand;
 begin
   //Result := FuncoesDataSnap.ExecutaMetodo_Sincrono(ConexaoDS, Metodo, Parametros_Valor, false);
+  Comando := ConexaoDS.DBXConnection.CreateCommand;
+  try
+    Comando.CommandType := TDBXCommandTypes.DSServerMethod;
+    Comando.Text := Metodo;
+    Comando.Prepare;
+    Comando.ExecuteUpdate;
+  finally
+    Comando.Free;
+  end;
 end;
 
 function TDMConexao.ProximoCodigo(Tabela: string): int64;

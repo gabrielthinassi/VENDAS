@@ -79,6 +79,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
         Height = 37
         Align = alRight
         Caption = '>|'
+        OnClick = btnUltimoClick
         ExplicitHeight = 32
       end
       object btnProximo: TSpeedButton
@@ -88,6 +89,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
         Height = 37
         Align = alRight
         Caption = '>'
+        OnClick = btnProximoClick
         ExplicitHeight = 32
       end
       object btnAnterior: TSpeedButton
@@ -97,6 +99,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
         Height = 37
         Align = alRight
         Caption = '<'
+        OnClick = btnAnteriorClick
         ExplicitTop = -3
       end
       object btnPrimeiro: TSpeedButton
@@ -106,6 +109,7 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
         Height = 37
         Align = alRight
         Caption = '|<'
+        OnClick = btnPrimeiroClick
         ExplicitHeight = 32
       end
     end
@@ -190,7 +194,8 @@ inherited FrmPaiCadastro: TFrmPaiCadastro
     end
   end
   object DSCadastro: TDataSource
-    Left = 235
-    Top = 55
+    OnStateChange = DSCadastroStateChange
+    Left = 160
+    Top = 75
   end
 end

@@ -37,7 +37,6 @@ type
     class function ClassOriginal: string; virtual;
     class function ClassRelacional: string; virtual;
 
-    class function CampoEmpresa: string; virtual;
     class function CampoChave: string; virtual;
     class function CampoRegistroSecundario: string; virtual;
     class function CamposFechamento: string; virtual;
@@ -56,7 +55,7 @@ type
     class function FiltroSql: string; virtual;
   end;
 
-  TFClassPaiCadastro = class of TClassPaiCadastro;
+  //TFClassPaiCadastro = class of TClassPaiCadastro;
 
 function CriarClassePeloNome(const Nome: string): TClassPaiCadastro;
 
@@ -120,11 +119,6 @@ begin
   end;
 end;
 
-class function TClassPaiCadastro.CampoEmpresa: string;
-begin
-  Result := '';
-end;
-
 class function TClassPaiCadastro.CamposCadastro: string;
 begin
   Result := '';
@@ -168,7 +162,7 @@ end;
 
 function CriarClassePeloNome(const Nome: string): TClassPaiCadastro;
 var
-  Classe: TFClassPaiCadastro;
+  Classe: TClassPaiCadastro;
   Persist: TPersistentClass;
 begin
   // Cria uma classe derivada de ClassPaiCadastro, pelo nome dela
@@ -180,7 +174,7 @@ begin
     except
       raise Exception.Create('A classe ' + Nome + ' não está disponível nesse módulo, entre em contato com a Tek-System');
     end;
-    Classe := TFClassPaiCadastro(Persist);
+    Classe := TClassPaiCadastro(Persist);
     Result := Classe.Create;
   finally
   end;

@@ -32,4 +32,11 @@ end;
 // Permite visualizar o retorno de uma Função em Debug Mode;
 
 
+
+
+// 2 - Procedures e Functions
+// https://www.devmedia.com.br/conceitos-basicos-sobre-procedures-e-functions-no-delphi/25303
+
+
+
 end.

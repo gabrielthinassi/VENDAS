@@ -6,7 +6,6 @@ uses
   UDMPai in 'Bases\UDMPai.pas' {DMPai: TDataModule},
   UDMPaiCadastro in 'Bases\UDMPaiCadastro.pas' {DMPaiCadastro: TDataModule},
   UFrmPai in 'Bases\UFrmPai.pas' {FrmPai},
-  UPaiAssistente in 'Bases\UPaiAssistente.pas' {FPaiAssistente},
   UPaiCadastro in 'Bases\UPaiCadastro.pas' {FPaiCadastro},
   ClassDataSet in '..\Class\ClassDataSet.pas',
   ClassExpositorDeClasses in '..\Class\ClassExpositorDeClasses.pas',
